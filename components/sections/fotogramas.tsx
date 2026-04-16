@@ -4,12 +4,12 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 
 const FOTOGRAMAS = [
-  { id: 1, src: 'https://picsum.photos/seed/frame1/600/400?grayscale' },
-  { id: 2, src: 'https://picsum.photos/seed/frame2/600/400?grayscale' },
-  { id: 3, src: 'https://picsum.photos/seed/frame3/600/400?grayscale' },
-  { id: 4, src: 'https://picsum.photos/seed/frame4/600/400?grayscale' },
-  { id: 5, src: 'https://picsum.photos/seed/frame5/600/400?grayscale' },
-  { id: 6, src: 'https://picsum.photos/seed/frame6/600/400?grayscale' },
+  { id: 1, src: '/1.png' },
+  { id: 2, src: '/2.png' },
+  { id: 3, src: '/3.png' },
+  { id: 4, src: '/4.png' },
+  { id: 5, src: '/5.png' },
+  { id: 6, src: '/6.png' },
 ];
 
 export function Fotogramas() {
@@ -45,6 +45,7 @@ export function Fotogramas() {
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100 sepia-[.4] mix-blend-multiply"
                 referrerPolicy="no-referrer"
+                unoptimized
               />
               <div className="absolute inset-0 ring-1 ring-inset ring-[#3A2A22]/10 rounded-xl" />
             </motion.div>
