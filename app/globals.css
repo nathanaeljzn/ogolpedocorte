@@ -20,10 +20,10 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #C4B29E;
+    background: #B1D8C4;
     border-radius: 10px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #8D7B68;
+    background: #165c36;
   }
 }

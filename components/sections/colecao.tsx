@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export function Colecao() {
   return (
-    <section id="colecao" className="py-24 md:py-32 px-6 bg-[#E8DFD0] border-y border-[#C4B29E]/50">
+    <section id="colecao" className="py-24 md:py-32 px-6 bg-[#E3F0E9] border-y border-[#B1D8C4]/50">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -13,8 +13,8 @@ export function Colecao() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight mb-8 text-[#3A2A22]">A Coleção</h2>
-          <div className="space-y-6 text-lg text-[#6B574B] leading-relaxed">
+          <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight mb-8 text-[#0E472D]">A Coleção</h2>
+          <div className="space-y-6 text-lg text-[#2B734D] leading-relaxed">
             <p>
               Manuel Eduardo Pierre Solon começou sua coleção de fotogramas ainda criança, conseguidos no cine são João, em Sobral. Seus álbuns foram aumentando em sua passagem pelo Crato. Já em Fortaleza chegou ao auge quando frequentava as seções dos cines Rex e Diogo.
             </p>
@@ -28,7 +28,7 @@ export function Colecao() {
           <div className="mt-10">
             <Link
               href="/albuns"
-              className="inline-flex items-center justify-center h-12 px-8 font-medium text-[#F4EFE6] bg-[#3A2A22] rounded-full hover:bg-[#2C1E16] transition-colors shadow-lg shadow-[#3A2A22]/20"
+              className="inline-flex items-center justify-center h-12 px-8 font-medium text-[#F4F9F6] bg-[#9B111E] rounded-full hover:bg-[#7A0D18] transition-colors shadow-lg shadow-[#0E472D]/20"
             >
               Folhear Álbuns
             </Link>

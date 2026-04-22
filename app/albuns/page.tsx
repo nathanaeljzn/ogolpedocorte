@@ -59,35 +59,35 @@ export default function AlbunsPage() {
   const currentPhoto = lightboxPhotoIndex !== null && selectedPage ? selectedPage.photos[lightboxPhotoIndex] : null;
 
   return (
-    <div className="min-h-screen bg-[#F4EFE6] text-[#3A2A22] flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#F4F9F6] text-[#0E472D] flex flex-col md:flex-row">
       {/* Header Mobile */}
-      <div className="md:hidden flex items-center p-4 border-b border-[#C4B29E]/50 bg-[#E8DFD0] sticky top-0 z-40">
-        <Link href="/" className="flex items-center text-sm text-[#6B574B] hover:text-[#3A2A22] transition-colors font-medium">
+      <div className="md:hidden flex items-center p-4 border-b border-[#B1D8C4]/50 bg-[#E3F0E9] sticky top-0 z-40">
+        <Link href="/" className="flex items-center text-sm text-[#2B734D] hover:text-[#0E472D] transition-colors font-medium">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Voltar ao Início
         </Link>
       </div>
 
       {/* Sidebar - Navegação de Volumes e Álbuns */}
-      <aside className="w-full md:w-80 border-r border-[#C4B29E]/50 bg-[#E8DFD0] flex-shrink-0 md:h-screen md:sticky md:top-0 overflow-y-auto custom-scrollbar">
+      <aside className="w-full md:w-80 border-r border-[#B1D8C4]/50 bg-[#E3F0E9] flex-shrink-0 md:h-screen md:sticky md:top-0 overflow-y-auto custom-scrollbar">
         <div className="p-6 hidden md:block">
-          <Link href="/" className="inline-flex items-center text-sm text-[#6B574B] hover:text-[#3A2A22] transition-colors mb-8 font-medium">
+          <Link href="/" className="inline-flex items-center text-sm text-[#2B734D] hover:text-[#0E472D] transition-colors mb-8 font-medium">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Link>
           <h1 className="text-2xl font-display font-bold tracking-tight">Acervo</h1>
-          <p className="text-sm text-[#6B574B] mt-2">Navegue pelos volumes e álbuns da coleção.</p>
+          <p className="text-sm text-[#2B734D] mt-2">Navegue pelos volumes e álbuns da coleção.</p>
         </div>
 
         <nav className="p-4 md:p-6 md:pt-0 space-y-4">
           {volumesData.map((volume) => (
-            <div key={volume.id} className="border border-[#C4B29E]/30 rounded-lg overflow-hidden bg-[#F4EFE6]/50">
+            <div key={volume.id} className="border border-[#B1D8C4]/30 rounded-lg overflow-hidden bg-[#F4F9F6]/50">
               <button
                 onClick={() => handleVolumeClick(volume.id)}
-                className="w-full flex flex-col p-4 text-left hover:bg-[#C4B29E]/20 transition-colors"
+                className="w-full flex flex-col p-4 text-left hover:bg-[#B1D8C4]/20 transition-colors"
               >
                 {volume.coverUrl && (
-                  <div className="w-full aspect-[3/2] relative rounded-md overflow-hidden mb-3 ring-1 ring-[#C4B29E]/30">
+                  <div className="w-full aspect-[3/2] relative rounded-md overflow-hidden mb-3 ring-1 ring-[#B1D8C4]/30">
                     <Image
                       src={volume.coverUrl}
                       alt={`Capa do ${volume.title}`}
@@ -97,11 +97,11 @@ export default function AlbunsPage() {
                   </div>
                 )}
                 <div className="flex items-center justify-between w-full">
-                  <span className="font-medium text-sm text-[#3A2A22]">{volume.title}</span>
+                  <span className="font-medium text-sm text-[#0E472D]">{volume.title}</span>
                   {expandedVolume === volume.id ? (
-                    <ChevronDown className="w-4 h-4 text-[#6B574B]" />
+                    <ChevronDown className="w-4 h-4 text-[#2B734D]" />
                   ) : (
-                    <ChevronRight className="w-4 h-4 text-[#6B574B]" />
+                    <ChevronRight className="w-4 h-4 text-[#2B734D]" />
                   )}
                 </div>
               </button>
@@ -114,15 +114,15 @@ export default function AlbunsPage() {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                   >
-                    <div className="p-2 pt-0 space-y-1 bg-[#E8DFD0]/30">
+                    <div className="p-2 pt-0 space-y-1 bg-[#E3F0E9]/30">
                       {volume.albums.map((album) => (
                         <button
                           key={album.id}
                           onClick={() => handleAlbumClick(album)}
                           className={`w-full text-left px-4 py-2 text-sm rounded-md transition-colors ${
                             selectedAlbum?.id === album.id
-                              ? 'bg-[#3A2A22] text-[#F4EFE6] font-medium shadow-md'
-                              : 'text-[#6B574B] hover:bg-[#C4B29E]/20 hover:text-[#3A2A22]'
+                              ? 'bg-[#9B111E] text-[#F4F9F6] font-medium shadow-md'
+                              : 'text-[#2B734D] hover:bg-[#B1D8C4]/20 hover:text-[#0E472D]'
                           }`}
                         >
                           {album.title}
@@ -138,12 +138,12 @@ export default function AlbunsPage() {
       </aside>
 
       {/* Main Content - Visualizador do Álbum */}
-      <main className="flex-1 flex flex-col min-h-[50vh] md:h-screen overflow-hidden bg-[#F4EFE6]">
+      <main className="flex-1 flex flex-col min-h-[50vh] md:h-screen overflow-hidden bg-[#F4F9F6]">
         {selectedAlbum ? (
           <>
             {/* Header do Álbum */}
-            <header className="p-6 border-b border-[#C4B29E]/50 bg-[#E8DFD0]/50 backdrop-blur-md flex-shrink-0">
-              <h2 className="text-2xl font-display font-bold text-[#3A2A22]">{selectedAlbum.title}</h2>
+            <header className="p-6 border-b border-[#B1D8C4]/50 bg-[#E3F0E9]/50 backdrop-blur-md flex-shrink-0">
+              <h2 className="text-2xl font-display font-bold text-[#0E472D]">{selectedAlbum.title}</h2>
               
               {/* Paginação */}
               <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2 custom-scrollbar">
@@ -153,8 +153,8 @@ export default function AlbunsPage() {
                     onClick={() => setSelectedPage(page)}
                     className={`px-4 py-1.5 text-sm rounded-full whitespace-nowrap transition-all ${
                       selectedPage?.id === page.id
-                        ? 'bg-[#3A2A22] text-[#F4EFE6] ring-1 ring-[#3A2A22]/20 shadow-md'
-                        : 'bg-transparent text-[#6B574B] hover:text-[#3A2A22] hover:bg-[#E8DFD0]'
+                        ? 'bg-[#9B111E] text-[#F4F9F6] ring-1 ring-[#0E472D]/20 shadow-md'
+                        : 'bg-transparent text-[#2B734D] hover:text-[#0E472D] hover:bg-[#E3F0E9]'
                     }`}
                   >
                     {page.title}
@@ -177,7 +177,7 @@ export default function AlbunsPage() {
                   {selectedPage?.photos.map((photo, index) => (
                     <div
                       key={photo.id}
-                      className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-[#D6C5B3] cursor-pointer border border-[#C4B29E]/50 shadow-sm hover:shadow-md transition-shadow"
+                      className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-[#A4D2B8] cursor-pointer border border-[#B1D8C4]/50 shadow-sm hover:shadow-md transition-shadow"
                       onClick={() => openLightbox(index)}
                     >
                       <Image
@@ -187,12 +187,12 @@ export default function AlbunsPage() {
                         className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100 sepia-[.4] mix-blend-multiply"
                         referrerPolicy="no-referrer"
                       />
-                      <div className="absolute inset-0 bg-[#2C1E16]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <ZoomIn className="w-8 h-8 text-[#F4EFE6]" />
+                      <div className="absolute inset-0 bg-[#052314]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <ZoomIn className="w-8 h-8 text-[#F4F9F6]" />
                       </div>
                       {photo.caption && (
-                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#2C1E16]/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <p className="text-sm font-medium text-[#F4EFE6] truncate">{photo.caption}</p>
+                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#052314]/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <p className="text-sm font-medium text-[#F4F9F6] truncate">{photo.caption}</p>
                         </div>
                       )}
                     </div>
@@ -202,7 +202,7 @@ export default function AlbunsPage() {
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-[#6B574B]">
+          <div className="flex-1 flex items-center justify-center text-[#2B734D]">
             Selecione um álbum para visualizar.
           </div>
         )}
@@ -215,7 +215,7 @@ export default function AlbunsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#2C1E16]/95 backdrop-blur-sm p-4 md:p-10"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#052314]/95 backdrop-blur-sm p-4 md:p-10"
             onClick={closeLightbox}
           >
             {/* Top Controls */}
@@ -225,7 +225,7 @@ export default function AlbunsPage() {
                   href={currentPhoto.documentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#F4EFE6] bg-[#6B574B] hover:bg-[#8D7B68] rounded-full transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#F4F9F6] bg-[#2B734D] hover:bg-[#165c36] rounded-full transition-colors"
                   title="Ver Ficha da Imagem"
                 >
                   <FileText className="w-4 h-4" />
@@ -233,7 +233,7 @@ export default function AlbunsPage() {
                 </a>
               )}
               <button
-                className="p-2 text-[#C4B29E] hover:text-[#F4EFE6] bg-[#3A2A22]/50 rounded-full transition-colors"
+                className="p-2 text-[#B1D8C4] hover:text-[#F4F9F6] bg-[#0E472D]/50 rounded-full transition-colors"
                 onClick={closeLightbox}
                 title="Fechar (Esc)"
               >
@@ -244,7 +244,7 @@ export default function AlbunsPage() {
             {/* Navigation Buttons */}
             {lightboxPhotoIndex !== null && lightboxPhotoIndex > 0 && (
               <button
-                className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 p-3 text-[#C4B29E] hover:text-[#F4EFE6] bg-[#3A2A22]/50 hover:bg-[#3A2A22]/80 rounded-full transition-all z-50"
+                className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 p-3 text-[#B1D8C4] hover:text-[#F4F9F6] bg-[#0E472D]/50 hover:bg-[#0E472D]/80 rounded-full transition-all z-50"
                 onClick={showPrevPhoto}
                 title="Anterior (Seta Esquerda)"
               >
@@ -254,7 +254,7 @@ export default function AlbunsPage() {
 
             {lightboxPhotoIndex !== null && lightboxPhotoIndex < selectedPage.photos.length - 1 && (
               <button
-                className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 p-3 text-[#C4B29E] hover:text-[#F4EFE6] bg-[#3A2A22]/50 hover:bg-[#3A2A22]/80 rounded-full transition-all z-50"
+                className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 p-3 text-[#B1D8C4] hover:text-[#F4F9F6] bg-[#0E472D]/50 hover:bg-[#0E472D]/80 rounded-full transition-all z-50"
                 onClick={showNextPhoto}
                 title="Próxima (Seta Direita)"
               >
@@ -266,7 +266,7 @@ export default function AlbunsPage() {
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="relative w-full max-w-5xl aspect-[4/3] md:aspect-video rounded-lg overflow-hidden ring-1 ring-[#C4B29E]/20 shadow-2xl bg-[#1A110D]"
+              className="relative w-full max-w-5xl aspect-[4/3] md:aspect-video rounded-lg overflow-hidden ring-1 ring-[#B1D8C4]/20 shadow-2xl bg-[#052314]"
               onClick={(e) => e.stopPropagation()}
             >
               <AnimatePresence mode="wait">
@@ -287,14 +287,14 @@ export default function AlbunsPage() {
                   >
                     {({ zoomIn, zoomOut, resetTransform }) => (
                       <>
-                        <div className="absolute top-4 left-4 flex items-center gap-2 z-50 bg-[#1A110D]/60 p-2 rounded-lg backdrop-blur-sm">
-                          <button onClick={() => zoomIn()} className="p-1.5 text-[#C4B29E] hover:text-[#F4EFE6] transition-colors" title="Aumentar Zoom">
+                        <div className="absolute top-4 left-4 flex items-center gap-2 z-50 bg-[#052314]/60 p-2 rounded-lg backdrop-blur-sm">
+                          <button onClick={() => zoomIn()} className="p-1.5 text-[#B1D8C4] hover:text-[#F4F9F6] transition-colors" title="Aumentar Zoom">
                             <ZoomIn className="w-5 h-5" />
                           </button>
-                          <button onClick={() => zoomOut()} className="p-1.5 text-[#C4B29E] hover:text-[#F4EFE6] transition-colors" title="Diminuir Zoom">
+                          <button onClick={() => zoomOut()} className="p-1.5 text-[#B1D8C4] hover:text-[#F4F9F6] transition-colors" title="Diminuir Zoom">
                             <ZoomOut className="w-5 h-5" />
                           </button>
-                          <button onClick={() => resetTransform()} className="p-1.5 text-[#C4B29E] hover:text-[#F4EFE6] transition-colors" title="Tamanho Original">
+                          <button onClick={() => resetTransform()} className="p-1.5 text-[#B1D8C4] hover:text-[#F4F9F6] transition-colors" title="Tamanho Original">
                             <Maximize className="w-5 h-5" />
                           </button>
                         </div>
@@ -317,8 +317,8 @@ export default function AlbunsPage() {
               </AnimatePresence>
 
               {currentPhoto.caption && (
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#1A110D] via-[#1A110D]/80 to-transparent pointer-events-none z-40">
-                  <p className="text-lg font-medium text-[#F4EFE6] text-center">{currentPhoto.caption}</p>
+                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#052314] via-[#052314]/80 to-transparent pointer-events-none z-40">
+                  <p className="text-lg font-medium text-[#F4F9F6] text-center">{currentPhoto.caption}</p>
                 </div>
               )}
             </motion.div>

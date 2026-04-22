@@ -14,8 +14,8 @@ export function Apresentacao() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight mb-8 text-[#3A2A22]">Apresentação</h2>
-            <div className="space-y-6 text-lg text-[#6B574B] leading-relaxed">
+            <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight mb-8 text-[#0E472D]">Apresentação</h2>
+            <div className="space-y-6 text-lg text-[#2B734D] leading-relaxed">
               <p>
                 Nos anos de 1990, herdei do meu pai uma coleção de mais de trinta mil fotogramas de cinema (décadas de 20 a 60). Esses fotogramas, em geral mostram os atores principais dos filmes e foram cuidadosamente guardados em álbuns feitos para esse fim, contento o nome e o ano da produção, bem como uma legenda com os nomes dos atores. Esse arquivo constitui uma fonte inesgotável de imagens da memória do cinema e um material de trabalho para minhas experimentações.
               </p>
@@ -30,7 +30,7 @@ export function Apresentacao() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-[#3A2A22]/10"
+            className="relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-[#0E472D]/10"
           >
             <Image
               src="/imagem-apresentacao.png"

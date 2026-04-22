@@ -5,16 +5,16 @@ import Image from 'next/image';
 
 export default function SolonRibeiroPage() {
   return (
-    <main className="min-h-screen bg-[#F4EFE6] text-[#3A2A22] selection:bg-[#3A2A22] selection:text-[#F4EFE6]">
+    <main className="min-h-screen bg-[#F4F9F6] text-[#0E472D] selection:bg-[#0E472D] selection:text-[#F4F9F6]">
       <Navbar />
       
       <article className="pt-32 pb-24 px-6 max-w-4xl mx-auto">
         <header className="mb-16 text-center">
-          <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-6 text-[#3A2A22]">Solon Ribeiro</h1>
-          <p className="text-xl text-[#6B574B] font-medium uppercase tracking-widest">O Artista / The Artist</p>
+          <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-6 text-[#0E472D]">Solon Ribeiro</h1>
+          <p className="text-xl text-[#2B734D] font-medium uppercase tracking-widest">O Artista / The Artist</p>
         </header>
 
-        <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#E8DFD0] mb-16 shadow-xl shadow-[#3A2A22]/10">
+        <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#E3F0E9] mb-16 shadow-xl shadow-[#0E472D]/10">
           <Image
             src="https://picsum.photos/seed/solon-full/1200/600?grayscale"
             alt="Solon Ribeiro"
@@ -22,10 +22,10 @@ export default function SolonRibeiroPage() {
             className="object-cover opacity-90 sepia-[.3] mix-blend-multiply"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 ring-1 ring-inset ring-[#3A2A22]/10 rounded-2xl" />
+          <div className="absolute inset-0 ring-1 ring-inset ring-[#0E472D]/10 rounded-2xl" />
         </div>
 
-        <div className="prose prose-lg prose-zinc max-w-none text-[#6B574B] prose-headings:text-[#3A2A22] prose-headings:font-display prose-a:text-[#3A2A22] hover:prose-a:text-[#6B574B] prose-strong:text-[#3A2A22]">
+        <div className="prose prose-lg prose-zinc max-w-none text-[#2B734D] prose-headings:text-[#0E472D] prose-headings:font-display prose-a:text-[#0E472D] hover:prose-a:text-[#B71C1C] prose-strong:text-[#0E472D]">
           
           <section className="mb-16">
             <p>
@@ -36,11 +36,11 @@ export default function SolonRibeiroPage() {
             </p>
           </section>
 
-          <hr className="border-[#C4B29E]/50 my-16" />
+          <hr className="border-[#B1D8C4]/50 my-16" />
 
           <section className="mb-16">
             <h2 className="text-3xl font-bold mb-8">Solon Ribeiro ou a violentação das imagens clichês</h2>
-            <p className="text-sm uppercase tracking-widest mb-8 text-[#8D7B68]">Texto: André Parente / Lucas Parente</p>
+            <p className="text-sm uppercase tracking-widest mb-8 text-[#B71C1C]">Texto: André Parente / Lucas Parente</p>
             
             <p>
               O Golpe do Corte é o termo utilizado por Solon para tratar da série de vídeos e instalações feitos com a coleção de fotogramas. Em um dos trabalhos, Solon utiliza fotogramas com legendas e cria um diálogo imaginário entre as personagens. Em outro, ele projeta os fotogramas de cima, enquanto maneja uns almofadões sobre os quais se deita, de forma que possam refletir melhor as imagens dos fotogramas. Assim, Solon ultrapassa o sentido da apropriação por meio da parada na imagem para se tornar uma espécie de arquivo vivo com uma dimensão performática. Curiosamente o artista parece um ator do cinema expressionista, um tanto incomodado pelas imagens que sobre ele são projetadas, como os clichês porventura pudessem roubar-lhe a alma. E veremos como, pouco a pouco, os clichês parecem de fato ganhar cada vez mais vida no trabalho de Solon até se tornarem verdadeiros duplos do artista. É até mesmo possível classificar diversos tipos de duplos que encarnam as imagens clichês na obra de Solon: doppelgängers (duplo fantasmático que surge como um augúrio de uma morte vindoura), incubos e sucumbis (demônios sexuais, masculinos ou femininos, que invadem nosso quarto quando sofremos de paralisia do sono), fiends (demônios sobrenaturais associados à possessão), todos estão presentes.
@@ -81,13 +81,13 @@ export default function SolonRibeiroPage() {
             <p>
               O chamado da morte – feito por um animal, uma máquina ou uma imagem cliché que entra em contato conosco através de um efeito, um ardil –, sua fala, seu olhar, são uma virtualidade pura que tenta nos capturar. Podemos comparar esta experiência de uma imagem que nos olha ou uma máquina que nos fala, à descrição feita por Viveiros de Castro do encontro entre os índios e as alteridades-espíritos.
             </p>
-            <blockquote className="border-l-4 border-[#C4B29E] pl-4 italic my-6">
+            <blockquote className="border-l-4 border-[#B1D8C4] pl-4 italic my-6">
               “Um dos traumas típicos, no mundo indígena, envolve uma saída solitária de uma pessoa ao mato, para caçar por exemplo, a qual desemboca no encontro repentino com esses germes, essas larvas de Estado que são as alteridades-espírito, as agências sobrenaturais com o poder de nos contra-definir: “Aqui o sujeito sou eu. Você não é humano coisa nenhuma. Venha para mim, torne-se um de nós”.” (VIVEIROS DE CASTRO, 2007, p. 232)
             </blockquote>
             <p>
               Viveiros de Castro chama este encontro com a morte (através de um diálogo ou troca de olhares) de quase-experiência. Não podemos narrar a morte sem termos morrido. Mas se morremos, tampouco poderemos voltar para contar como foi. E ainda assim, narramos a morte porque a quase-experimentamos. A única coisa que podemos narrar é, portanto, esta quase-morte. A quase-experiência está na base das narrativas ao mesmo tempo que precede e extrapola toda narrativa. É o ilocalizável e inenarrável (o virtual) por detrás do que é narrado. Da não-imagem e do simulacro emana, assim, uma quasidade – sobrenatural enquanto virtualidade pura:
             </p>
-            <blockquote className="border-l-4 border-[#C4B29E] pl-4 italic my-6">
+            <blockquote className="border-l-4 border-[#B1D8C4] pl-4 italic my-6">
               “O sobrenatural não é o imaginário, não é o que acontece em outro mundo; o sobrenatural é aquilo que quase-acontece em nosso mundo, ou melhor, ao nosso mundo, transformando-o em um quase-outro mundo. Quase-acontecer é um modo específico de acontecer, nem qualidade nem quantidade, mas “quasidade”. Não se trata de uma categoria psicológica, mas ontológica: a intensidade ou virtualidade puras. O que exatamente acontece, quando algo quase acontece? O quase-acontecer: a repetição do que não terá acontecido? (…) Em suma, creio que há uma vasta província a mapear aqui – a economia da quasidade nas ontologias indígenas. Talvez haja uma relação complexa disso com o mecanismo de conjuração- antecipação de que falam Deleuze e Guattari nos Mil platôs.” (VIVEIROS DE CASTRO, 2007, p. 239-240)
             </blockquote>
             <p>
@@ -99,17 +99,17 @@ export default function SolonRibeiroPage() {
             <p>
               O simulacro é mais e menos que uma cópia e a não-imagem, dos filmes de Chris Marker, mais e menos que uma imagem. Falamos também do quase-cinema tanto de Hélio Oiticica e Neville d’Almeida quanto de Solon Ribeiro. Poderíamos falar agora desse aquém e além fotográfico do cinema enquanto quasidade. Algo que busca dar uma nova vida às imagens (destacando-as dos clichês), mas que para tal necessita fazer uso de um efeito (de um fato artificial que parece emanar do mundo dos mortos), de uma quasidade que viria substituir a quantidade e a qualidade. Assim, as imagens de Solon, mas também as do efeito-cinema (imagens-feitiço) da EXPERIÊNCIA CINEMA de Rosangela Rennó extrapolam qualquer métrica (grau) e qualidade (natureza), ultrapassando os limites do real para tocar nestas alteridades-espírito, nesta quasidade tão perigosa porque anunciadora de novos regimes de poder.
             </p>
-            <div className="text-sm mt-8 text-[#8D7B68]">
+            <div className="text-sm mt-8 text-[#9B111E]">
               <p>¹ Como diz um personagem no final do filme Com o Passar do Tempo (Wim Wenders, 1976), “os americanos colonizaram o nosso inconsciente”.</p>
               <p>² Tscherkassky, feito um Doutor Frankenstein, monta seus filmes diretamente sobre o negativo em um laboratório fotográfico, de forma que demora cerca de 8 ou mais horas de trabalho para alterar apenas dois segundos de película. Certa vez Tscherkassky disse irritado, em uma conferência na mostra de cinema experimental Xperimenta (Barcelona, 2009), que “se vocês teimam em dizer que o cinema está morto, ao menos deixem-me tentar ressucitá-lo com eletrochoques!”</p>
             </div>
           </section>
 
-          <hr className="border-[#C4B29E]/50 my-16" />
+          <hr className="border-[#B1D8C4]/50 my-16" />
 
           <section className="mb-16">
             <h2 className="text-3xl font-bold mb-8">Solon Ribeiro, He killed cinema, photography and art in the cut stroke</h2>
-            <p className="text-sm uppercase tracking-widest mb-8 text-[#8D7B68]">Texto: Ricardo Resende (Curator, Museu Bispo do Rosario Arte Comtemporânea)</p>
+            <p className="text-sm uppercase tracking-widest mb-8 text-[#B71C1C]">Texto: Ricardo Resende (Curator, Museu Bispo do Rosario Arte Comtemporânea)</p>
             
             <p>
               Solon Ribeiro (1960) is pursued by cinema. In fact, it must be a torment the inheritance of 20.000 frames extracted from films from the 1920s to the 1960s, inherited from his father. A thorough action by the film designer, the action of gathering thousands of images of actresses, actors and scenes from the Golden Age of cinematography.
@@ -174,12 +174,12 @@ export default function SolonRibeiroPage() {
             <p>
               Solon redo cinema by releasing cinema from the cinema itself. It is pure poetry of Image. He releases the films we carry within us. Memory as movies are the many films we inhabit.
             </p>
-            <div className="text-sm mt-8 text-[#8D7B68]">
+            <div className="text-sm mt-8 text-[#9B111E]">
               <p>¹ The "Aracati wind" runs more than 300 kilometers every day. Channeled by the Jaguaribe River, it composes the real and the imaginary dimension of the people of the área (the so-called “sertanejos”), well before being portrayed in the novel Iracema, by the writer José de Alencar.</p>
             </div>
           </section>
 
-          <hr className="border-[#C4B29E]/50 my-16" />
+          <hr className="border-[#B1D8C4]/50 my-16" />
 
           <section className="mb-16">
             <h2 className="text-3xl font-bold mb-8">Portfólio & Séries</h2>

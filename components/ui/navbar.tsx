@@ -18,9 +18,9 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#F4EFE6]/95 backdrop-blur-md border-b border-[#C4B29E]/50 py-4 shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#F4F9F6]/95 backdrop-blur-md border-b border-[#B1D8C4]/50 py-4 shadow-sm">
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <Link href="/#apresentacao" className="text-xl font-display font-bold tracking-tighter uppercase transition-colors text-[#3A2A22]">
+        <Link href="/#apresentacao" className="text-xl font-display font-bold tracking-tighter uppercase transition-colors text-[#0E472D]">
           O Golpe do Corte
         </Link>
 
@@ -30,7 +30,7 @@ export function Navbar() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-medium transition-colors text-[#6B574B] hover:text-[#3A2A22]"
+              className="text-sm font-medium transition-colors text-[#2B734D] hover:text-[#0E472D]"
             >
               {item.name}
             </Link>
@@ -39,7 +39,7 @@ export function Navbar() {
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden transition-colors text-[#6B574B] hover:text-[#3A2A22]"
+          className="md:hidden transition-colors text-[#2B734D] hover:text-[#0E472D]"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -53,14 +53,14 @@ export function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-[#F4EFE6]/95 backdrop-blur-xl border-b border-[#C4B29E]/50 py-4 px-6 flex flex-col gap-4 md:hidden"
+            className="absolute top-full left-0 right-0 bg-[#F4F9F6]/95 backdrop-blur-xl border-b border-[#B1D8C4]/50 py-4 px-6 flex flex-col gap-4 md:hidden"
           >
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-medium text-[#6B574B] hover:text-[#3A2A22] transition-colors"
+                className="text-lg font-medium text-[#2B734D] hover:text-[#0E472D] transition-colors"
               >
                 {item.name}
               </Link>
