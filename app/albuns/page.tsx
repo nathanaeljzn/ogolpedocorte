@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 export type Photo = { id: string; url: string; caption?: string; documentUrl?: string; };
-export type DBNode = { id: string; name: string; path: string; };
+export type DBNode = { id: string; name: string; path: string; coverUrl?: string; };
 
 export default function AlbunsPage() {
   const [volumes, setVolumes] = useState<DBNode[]>([]);
@@ -184,6 +184,17 @@ export default function AlbunsPage() {
                   onClick={() => handleVolumeClick(volume)}
                   className="w-full flex flex-col p-4 text-left hover:bg-[#B1D8C4]/20 transition-colors"
                 >
+                  {volume.coverUrl && (
+                    <div className="w-full aspect-[3/2] relative rounded-md overflow-hidden mb-3 ring-1 ring-[#B1D8C4]/30">
+                      <Image
+                        src={volume.coverUrl}
+                        alt={`Capa do ${volume.name}`}
+                        fill
+                        className="object-cover sepia-[.2] mix-blend-multiply opacity-90"
+                        unoptimized
+                      />
+                    </div>
+                  )}
                   <div className="flex items-center justify-between w-full">
                     <span className="font-medium text-sm text-[#0E472D]">{volume.name}</span>
                     {expandedVolume === volume.id ? (

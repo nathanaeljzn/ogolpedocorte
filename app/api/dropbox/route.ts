@@ -27,11 +27,16 @@ export async function GET(request: Request) {
         imageEntries.map(async (entry: any) => {
           let link = '';
           try {
-             // Getting temp link
-             const tempResp = await dbx.filesGetTemporaryLink({ path: entry.id });
-             link = tempResp.result.link;
+             const sharedLinks = await dbx.sharingListSharedLinks({ path: entry.id });
+             if (sharedLinks.result.links.length > 0) {
+               link = sharedLinks.result.links[0].url;
+             } else {
+               const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: entry.id });
+               link = newLink.result.url;
+             }
+             link = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
           } catch(e) {
-             console.error("Error getting temp link for", entry.name);
+             console.error("Error getting public link for", entry.name);
           }
           return {
             id: entry.id,
@@ -50,8 +55,15 @@ export async function GET(request: Request) {
       // Match PDF map if they exist for specific images
       for (const pdf of pdfEntries) {
          try {
-           const tempResp = await dbx.filesGetTemporaryLink({ path: (pdf as any).id });
-           pdfMap[(pdf as any).name.replace('.pdf', '')] = tempResp.result.link;
+           const sharedLinks = await dbx.sharingListSharedLinks({ path: (pdf as any).id });
+           let link = '';
+           if (sharedLinks.result.links.length > 0) {
+             link = sharedLinks.result.links[0].url;
+           } else {
+             const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: (pdf as any).id });
+             link = newLink.result.url;
+           }
+           pdfMap[(pdf as any).name.replace('.pdf', '')] = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
          } catch(e) {}
       }
 
@@ -62,16 +74,46 @@ export async function GET(request: Request) {
 
       return NextResponse.json({ success: true, files: finalImages });
     } else {
-      // Just returning the folders
+      // Return folders AND any images inside the folder (useful for fetching Covers at the root)
       const folders = response.result.entries
         .filter((entry: any) => entry['.tag'] === 'folder')
         .map((entry: any) => ({
           id: entry.id,
           name: entry.name,
           path: entry.path_lower || entry.path_display || `/${entry.name}`,
+          coverUrl: null as string | null
         }));
         
-      return NextResponse.json({ success: true, folders });
+      // Check if there are cover files in this root folder mapping to the volumes
+      const coverEntries = response.result.entries.filter((entry: any) => 
+        entry['.tag'] === 'file' && entry.name.match(/CAPA V\d+\.(jpg|jpeg|png)$/i)
+      );
+      
+      let coverMap: Record<string, string> = {};
+      for (const cover of coverEntries) {
+         try {
+           const match = cover.name.match(/CAPA V(\d+)/i);
+           if (match) {
+             const volNum = match[1];
+             const sharedLinks = await dbx.sharingListSharedLinks({ path: (cover as any).id });
+             let link = '';
+             if (sharedLinks.result.links.length > 0) {
+               link = sharedLinks.result.links[0].url;
+             } else {
+               const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: (cover as any).id });
+               link = newLink.result.url;
+             }
+             coverMap[`VOLUME ${volNum}`] = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+           }
+         } catch(e) {}
+      }
+
+      const finalFolders = folders.map((f) => ({
+         ...f,
+         coverUrl: coverMap[f.name.toUpperCase()] || null
+      }));
+        
+      return NextResponse.json({ success: true, folders: finalFolders });
     }
     
   } catch (error: any) {
