@@ -33,7 +33,7 @@ export function Apresentacao() {
             className="relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-[#0E472D]/10"
           >
             <Image
-              src="/imagem-apresentacao.png"
+              src="https://dl.dropboxusercontent.com/scl/fi/151y9dv7jrw00hdibjmpj/imagem-apresentacao.png.png?rlkey=xouekdcvyv6jog99iicg0mj78&raw=1"
               alt="Apresentação"
               width={800}
               height={1000}

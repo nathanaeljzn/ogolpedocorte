@@ -17,7 +17,7 @@ export function Footer() {
         <div className="flex flex-wrap items-center justify-center md:justify-end gap-8">
           <div className="relative w-[100px] h-[50px]">
             <Image
-              src="/rumos.png"
+              src="https://dl.dropboxusercontent.com/scl/fi/k2144todmu43e4ezz3fbl/rumos.png.png?rlkey=dkr6yp3o7djbbvqzpk9t929r6&raw=1"
               alt="Rumos Itaú Cultural"
               fill
               className="object-contain"
@@ -26,7 +26,7 @@ export function Footer() {
           </div>
           <div className="relative w-[120px] h-[60px]">
             <Image
-              src="/minc.png"
+              src="https://dl.dropboxusercontent.com/scl/fi/klc0qocyvim65hoa7tfu0/minc.png.png?rlkey=z1oxg2ekldkqfvjih4qut8ww6&raw=1"
               alt="Ministério da Cultura"
               fill
               className="object-contain"
@@ -35,7 +35,7 @@ export function Footer() {
           </div>
           <div className="relative w-[120px] h-[60px]">
             <Image
-              src="/rouanet.png"
+              src="https://dl.dropboxusercontent.com/scl/fi/areisphec2daunasow7cq/rouanet.png.png?rlkey=juy4pg9bjoz3dy0xmz28hd3dp&raw=1"
               alt="Lei Rouanet"
               fill
               className="object-contain"

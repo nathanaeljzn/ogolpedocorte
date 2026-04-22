@@ -4,12 +4,12 @@ import { motion } from 'motion/react';
 import Image from 'next/image';
 
 const FOTOGRAMAS = [
-  { id: 1, src: '/1.png' },
-  { id: 2, src: '/2.png' },
-  { id: 3, src: '/3.png' },
-  { id: 4, src: '/4.png' },
-  { id: 5, src: '/5.png' },
-  { id: 6, src: '/6.png' },
+  { id: 1, src: 'https://dl.dropboxusercontent.com/scl/fi/l7k9x3bvq165tj7j7jr6m/1.png?rlkey=s03d5gkgllofjgha5plljezrp&raw=1' },
+  { id: 2, src: 'https://dl.dropboxusercontent.com/scl/fi/5231maaic2f0d01acpec5/2.png?rlkey=tme909c2odchqy6o0gxggur4a&raw=1' },
+  { id: 3, src: 'https://dl.dropboxusercontent.com/scl/fi/in7rzc6i7q5dv4dwi2r65/3.png?rlkey=v8b4417bfz9vrmxxkzomm4fz3&raw=1' },
+  { id: 4, src: 'https://dl.dropboxusercontent.com/scl/fi/rje5vwmwfqndudf8cq8yt/4.png?rlkey=0qlzacre2f610t7k2k60jshxu&raw=1' },
+  { id: 5, src: 'https://dl.dropboxusercontent.com/scl/fi/lev6u58ze8oftfl6j9xj6/5.png?rlkey=d3mm4g5dseyy8x0uwuv26dko6&raw=1' },
+  { id: 6, src: 'https://dl.dropboxusercontent.com/scl/fi/robmmbiyj79zpj760a099/6.png?rlkey=zt93mmqz45xg55hb3nprre2oo&raw=1' },
 ];
 
 export function Fotogramas() {
