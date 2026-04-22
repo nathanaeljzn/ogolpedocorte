@@ -39,7 +39,18 @@ export default function AlbunsPage() {
             f.name.toUpperCase().startsWith('VOL') && f.name.toUpperCase().includes('VOLUME 1')
           );
           vols.sort((a, b) => a.name.localeCompare(b.name));
-          setVolumes(vols);
+          
+          // Fallback manual para as capas dos volumes, já que estão armazenadas dentro de pastas filhas
+          const MANUAL_COVERS: Record<string, string> = {
+             'VOLUME 1': 'https://dl.dropboxusercontent.com/scl/fi/hwgyjpwamg4av5q7cjzjb/CAPA-V1.jpg?rlkey=z9chzeh6as840a6xd40re6f74&raw=1'
+          };
+          
+          const volsWithCovers = vols.map(v => ({
+             ...v,
+             coverUrl: v.coverUrl || MANUAL_COVERS[v.name.toUpperCase()] || undefined
+          }));
+          
+          setVolumes(volsWithCovers);
         }
       })
       .finally(() => setLoadingInitial(false));
