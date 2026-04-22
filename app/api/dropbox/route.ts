@@ -80,7 +80,7 @@ export async function GET(request: Request) {
         .map((entry: any) => ({
           id: entry.id,
           name: entry.name,
-          path: entry.path_lower || entry.path_display || `/${entry.name}`,
+          path: entry.path_lower || entry.path_display || (folder ? `${folder}/${entry.name}` : `/${entry.name}`),
           coverUrl: null as string | null
         }));
         
