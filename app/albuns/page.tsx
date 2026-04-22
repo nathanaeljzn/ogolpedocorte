@@ -34,7 +34,10 @@ export default function AlbunsPage() {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          const vols = (data.folders as DBNode[]).filter(f => f.name.toUpperCase().startsWith('VOL'));
+          // Temporariamente filtrando apenas pelo "VOLUME 1". Pode ser desfeito depois solicitando para mostrar todos.
+          const vols = (data.folders as DBNode[]).filter(f => 
+            f.name.toUpperCase().startsWith('VOL') && f.name.toUpperCase().includes('VOLUME 1')
+          );
           vols.sort((a, b) => a.name.localeCompare(b.name));
           setVolumes(vols);
         }
