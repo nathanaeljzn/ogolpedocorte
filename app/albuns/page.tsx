@@ -2,48 +2,141 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronRight, ChevronDown, X, ZoomIn, ArrowLeft, ChevronLeft, ZoomOut, Maximize, FileText } from 'lucide-react';
+import { ChevronRight, ChevronDown, X, ZoomIn, ArrowLeft, ChevronLeft, ZoomOut, Maximize, FileText, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import { volumesData, Volume, Album, Page, Photo } from '@/lib/data/albums';
+
+export type Photo = { id: string; url: string; caption?: string; documentUrl?: string; };
+export type DBNode = { id: string; name: string; path: string; };
 
 export default function AlbunsPage() {
-  const [expandedVolume, setExpandedVolume] = useState<string | null>(volumesData[0].id);
-  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(volumesData[0].albums[0]);
-  const [selectedPage, setSelectedPage] = useState<Page | null>(volumesData[0].albums[0].pages[0]);
+  const [volumes, setVolumes] = useState<DBNode[]>([]);
+  const [expandedVolume, setExpandedVolume] = useState<string | null>(null);
+  
+  const [albumsByVolume, setAlbumsByVolume] = useState<Record<string, DBNode[]>>({});
+  const [selectedAlbum, setSelectedAlbum] = useState<DBNode | null>(null);
+  
+  const [pagesByAlbum, setPagesByAlbum] = useState<Record<string, DBNode[]>>({});
+  const [selectedPage, setSelectedPage] = useState<DBNode | null>(null);
+  
+  const [photosByPage, setPhotosByPage] = useState<Record<string, Photo[]>>({});
   const [lightboxPhotoIndex, setLightboxPhotoIndex] = useState<number | null>(null);
 
-  const handleVolumeClick = (volumeId: string) => {
-    setExpandedVolume(expandedVolume === volumeId ? null : volumeId);
+  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [loadingAlbums, setLoadingAlbums] = useState<Record<string, boolean>>({});
+  const [loadingPages, setLoadingPages] = useState<Record<string, boolean>>({});
+  const [loadingPhotos, setLoadingPhotos] = useState<Record<string, boolean>>({});
+
+  // 1. Load root volumes on mount
+  useEffect(() => {
+    fetch('/api/dropbox?folder=')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const vols = (data.folders as DBNode[]).filter(f => f.name.toUpperCase().startsWith('VOL'));
+          vols.sort((a, b) => a.name.localeCompare(b.name));
+          setVolumes(vols);
+        }
+      })
+      .finally(() => setLoadingInitial(false));
+  }, []);
+
+  // 2. Load albums when volume expands
+  const handleVolumeClick = async (volume: DBNode) => {
+    const isExpanding = expandedVolume !== volume.id;
+    setExpandedVolume(isExpanding ? volume.id : null);
+    
+    if (isExpanding && !albumsByVolume[volume.id]) {
+      setLoadingAlbums(prev => ({ ...prev, [volume.id]: true }));
+      try {
+        const res = await fetch(`/api/dropbox?folder=${encodeURIComponent(volume.path)}`);
+        const data = await res.json();
+        if (data.success) {
+          // Sort albums alphabetically
+          const albums = (data.folders as DBNode[]).sort((a, b) => a.name.localeCompare(b.name));
+          setAlbumsByVolume(prev => ({ ...prev, [volume.id]: albums }));
+        }
+      } finally {
+        setLoadingAlbums(prev => ({ ...prev, [volume.id]: false }));
+      }
+    }
   };
 
-  const handleAlbumClick = (album: Album) => {
+  // 3. Load pages when album is selected
+  const handleAlbumClick = async (album: DBNode) => {
     setSelectedAlbum(album);
-    setSelectedPage(album.pages[0]);
+    setSelectedPage(null); // reset page
+    
+    if (!pagesByAlbum[album.id]) {
+      setLoadingPages(prev => ({ ...prev, [album.id]: true }));
+      try {
+        const res = await fetch(`/api/dropbox?folder=${encodeURIComponent(album.path)}`);
+        const data = await res.json();
+        if (data.success) {
+          // Sort numeric pages naturally
+          const pages = (data.folders as DBNode[]).sort((a, b) => {
+             const numA = parseInt(a.name.replace(/\D/g, '')) || 0;
+             const numB = parseInt(b.name.replace(/\D/g, '')) || 0;
+             return numA - numB;
+          });
+          setPagesByAlbum(prev => ({ ...prev, [album.id]: pages }));
+          if (pages.length > 0) {
+            handlePageClick(pages[0]);
+          }
+        }
+      } finally {
+        setLoadingPages(prev => ({ ...prev, [album.id]: false }));
+      }
+    } else if (pagesByAlbum[album.id].length > 0) {
+      handlePageClick(pagesByAlbum[album.id][0]);
+    }
   };
 
-  const openLightbox = (index: number) => {
-    setLightboxPhotoIndex(index);
+  // 4. Load photos when page is selected
+  const handlePageClick = async (page: DBNode) => {
+    setSelectedPage(page);
+    
+    if (!photosByPage[page.id]) {
+      setLoadingPhotos(prev => ({ ...prev, [page.id]: true }));
+      try {
+        const res = await fetch(`/api/dropbox?folder=${encodeURIComponent(page.path)}&images=true`);
+        const data = await res.json();
+        if (data.success) {
+          const photos = (data.files as any[]).map(f => ({
+            id: f.id,
+            url: f.url,
+            caption: f.name,
+            documentUrl: f.documentUrl
+          }));
+          // Sort photos by name
+          photos.sort((a, b) => (a.caption || '').localeCompare(b.caption || ''));
+          setPhotosByPage(prev => ({ ...prev, [page.id]: photos }));
+        }
+      } finally {
+        setLoadingPhotos(prev => ({ ...prev, [page.id]: false }));
+      }
+    }
   };
 
-  const closeLightbox = () => {
-    setLightboxPhotoIndex(null);
-  };
+  const openLightbox = (index: number) => setLightboxPhotoIndex(index);
+  const closeLightbox = () => setLightboxPhotoIndex(null);
 
+  const activePhotos = selectedPage ? photosByPage[selectedPage.id] || [] : [];
+  
   const showNextPhoto = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (selectedPage && lightboxPhotoIndex !== null) {
-      setLightboxPhotoIndex((prev) => (prev !== null && prev < selectedPage.photos.length - 1 ? prev + 1 : prev));
+    if (lightboxPhotoIndex !== null && lightboxPhotoIndex < activePhotos.length - 1) {
+      setLightboxPhotoIndex(prev => (prev !== null ? prev + 1 : prev));
     }
-  }, [selectedPage, lightboxPhotoIndex]);
+  }, [lightboxPhotoIndex, activePhotos.length]);
 
   const showPrevPhoto = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (selectedPage && lightboxPhotoIndex !== null) {
-      setLightboxPhotoIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : prev));
+    if (lightboxPhotoIndex !== null && lightboxPhotoIndex > 0) {
+      setLightboxPhotoIndex(prev => (prev !== null ? prev - 1 : prev));
     }
-  }, [selectedPage, lightboxPhotoIndex]);
+  }, [lightboxPhotoIndex]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -56,11 +149,10 @@ export default function AlbunsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [lightboxPhotoIndex, showNextPhoto, showPrevPhoto]);
 
-  const currentPhoto = lightboxPhotoIndex !== null && selectedPage ? selectedPage.photos[lightboxPhotoIndex] : null;
+  const currentPhoto = lightboxPhotoIndex !== null ? activePhotos[lightboxPhotoIndex] : null;
 
   return (
     <div className="min-h-screen bg-[#F4F9F6] text-[#0E472D] flex flex-col md:flex-row">
-      {/* Header Mobile */}
       <div className="md:hidden flex items-center p-4 border-b border-[#B1D8C4]/50 bg-[#E3F0E9] sticky top-0 z-40">
         <Link href="/" className="flex items-center text-sm text-[#2B734D] hover:text-[#0E472D] transition-colors font-medium">
           <ArrowLeft className="w-4 h-4 mr-2" />
@@ -68,7 +160,6 @@ export default function AlbunsPage() {
         </Link>
       </div>
 
-      {/* Sidebar - Navegação de Volumes e Álbuns */}
       <aside className="w-full md:w-80 border-r border-[#B1D8C4]/50 bg-[#E3F0E9] flex-shrink-0 md:h-screen md:sticky md:top-0 overflow-y-auto custom-scrollbar">
         <div className="p-6 hidden md:block">
           <Link href="/" className="inline-flex items-center text-sm text-[#2B734D] hover:text-[#0E472D] transition-colors mb-8 font-medium">
@@ -80,130 +171,146 @@ export default function AlbunsPage() {
         </div>
 
         <nav className="p-4 md:p-6 md:pt-0 space-y-4">
-          {volumesData.map((volume) => (
-            <div key={volume.id} className="border border-[#B1D8C4]/30 rounded-lg overflow-hidden bg-[#F4F9F6]/50">
-              <button
-                onClick={() => handleVolumeClick(volume.id)}
-                className="w-full flex flex-col p-4 text-left hover:bg-[#B1D8C4]/20 transition-colors"
-              >
-                {volume.coverUrl && (
-                  <div className="w-full aspect-[3/2] relative rounded-md overflow-hidden mb-3 ring-1 ring-[#B1D8C4]/30">
-                    <Image
-                      src={volume.coverUrl}
-                      alt={`Capa do ${volume.title}`}
-                      fill
-                      className="object-cover sepia-[.2] mix-blend-multiply opacity-90"
-                    />
-                  </div>
-                )}
-                <div className="flex items-center justify-between w-full">
-                  <span className="font-medium text-sm text-[#0E472D]">{volume.title}</span>
-                  {expandedVolume === volume.id ? (
-                    <ChevronDown className="w-4 h-4 text-[#2B734D]" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 text-[#2B734D]" />
-                  )}
-                </div>
-              </button>
-
-              <AnimatePresence>
-                {expandedVolume === volume.id && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="p-2 pt-0 space-y-1 bg-[#E3F0E9]/30">
-                      {volume.albums.map((album) => (
-                        <button
-                          key={album.id}
-                          onClick={() => handleAlbumClick(album)}
-                          className={`w-full text-left px-4 py-2 text-sm rounded-md transition-colors ${
-                            selectedAlbum?.id === album.id
-                              ? 'bg-[#9B111E] text-[#F4F9F6] font-medium shadow-md'
-                              : 'text-[#2B734D] hover:bg-[#B1D8C4]/20 hover:text-[#0E472D]'
-                          }`}
-                        >
-                          {album.title}
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+          {loadingInitial ? (
+            <div className="flex items-center justify-center py-10">
+              <Loader2 className="w-6 h-6 animate-spin text-[#2B734D]" />
             </div>
-          ))}
+          ) : volumes.length === 0 ? (
+            <div className="text-sm text-[#2B734D] text-center">Nenhum volume encontrado no Dropbox.</div>
+          ) : (
+             volumes.map((volume) => (
+              <div key={volume.id} className="border border-[#B1D8C4]/30 rounded-lg overflow-hidden bg-[#F4F9F6]/50">
+                <button
+                  onClick={() => handleVolumeClick(volume)}
+                  className="w-full flex flex-col p-4 text-left hover:bg-[#B1D8C4]/20 transition-colors"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span className="font-medium text-sm text-[#0E472D]">{volume.name}</span>
+                    {expandedVolume === volume.id ? (
+                      <ChevronDown className="w-4 h-4 text-[#2B734D]" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 text-[#2B734D]" />
+                    )}
+                  </div>
+                </button>
+
+                <AnimatePresence>
+                  {expandedVolume === volume.id && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-2 pt-0 space-y-1 bg-[#E3F0E9]/30">
+                        {loadingAlbums[volume.id] ? (
+                           <div className="flex justify-center py-4"><Loader2 className="w-4 h-4 animate-spin text-[#2B734D]" /></div>
+                        ) : albumsByVolume[volume.id]?.length === 0 ? (
+                           <div className="px-4 py-2 text-xs text-[#2B734D]">Vazio</div>
+                        ) : (
+                           albumsByVolume[volume.id]?.map((album) => (
+                            <button
+                              key={album.id}
+                              onClick={() => handleAlbumClick(album)}
+                              className={`w-full text-left px-4 py-2 text-sm rounded-md transition-colors ${
+                                selectedAlbum?.id === album.id
+                                  ? 'bg-[#9B111E] text-[#F4F9F6] font-medium shadow-md'
+                                  : 'text-[#2B734D] hover:bg-[#B1D8C4]/20 hover:text-[#0E472D]'
+                              }`}
+                            >
+                              {album.name}
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))
+          )}
         </nav>
       </aside>
 
-      {/* Main Content - Visualizador do Álbum */}
       <main className="flex-1 flex flex-col min-h-[50vh] md:h-screen overflow-hidden bg-[#F4F9F6]">
         {selectedAlbum ? (
           <>
-            {/* Header do Álbum */}
             <header className="p-6 border-b border-[#B1D8C4]/50 bg-[#E3F0E9]/50 backdrop-blur-md flex-shrink-0">
-              <h2 className="text-2xl font-display font-bold text-[#0E472D]">{selectedAlbum.title}</h2>
+              <h2 className="text-2xl font-display font-bold text-[#0E472D]">{selectedAlbum.name}</h2>
               
-              {/* Paginação */}
               <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2 custom-scrollbar">
-                {selectedAlbum.pages.map((page) => (
-                  <button
-                    key={page.id}
-                    onClick={() => setSelectedPage(page)}
-                    className={`px-4 py-1.5 text-sm rounded-full whitespace-nowrap transition-all ${
-                      selectedPage?.id === page.id
-                        ? 'bg-[#9B111E] text-[#F4F9F6] ring-1 ring-[#0E472D]/20 shadow-md'
-                        : 'bg-transparent text-[#2B734D] hover:text-[#0E472D] hover:bg-[#E3F0E9]'
-                    }`}
-                  >
-                    {page.title}
-                  </button>
-                ))}
+                {loadingPages[selectedAlbum.id] ? (
+                  <Loader2 className="w-5 h-5 animate-spin text-[#2B734D]" />
+                ) : (
+                  pagesByAlbum[selectedAlbum.id]?.map((page) => (
+                    <button
+                      key={page.id}
+                      onClick={() => handlePageClick(page)}
+                      className={`px-4 py-1.5 text-sm rounded-full whitespace-nowrap transition-all ${
+                        selectedPage?.id === page.id
+                          ? 'bg-[#9B111E] text-[#F4F9F6] ring-1 ring-[#0E472D]/20 shadow-md'
+                          : 'bg-transparent text-[#2B734D] hover:text-[#0E472D] border border-[#B1D8C4]/50 hover:bg-[#E3F0E9]'
+                      }`}
+                    >
+                      {page.name}
+                    </button>
+                  ))
+                )}
               </div>
             </header>
 
-            {/* Grid de Fotos da Página */}
-            <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={selectedPage?.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
-                >
-                  {selectedPage?.photos.map((photo, index) => (
-                    <div
-                      key={photo.id}
-                      className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-[#A4D2B8] cursor-pointer border border-[#B1D8C4]/50 shadow-sm hover:shadow-md transition-shadow"
-                      onClick={() => openLightbox(index)}
-                    >
-                      <Image
-                        src={photo.url}
-                        alt={photo.caption || 'Fotograma'}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100 sepia-[.4] mix-blend-multiply"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute inset-0 bg-[#052314]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <ZoomIn className="w-8 h-8 text-[#F4F9F6]" />
-                      </div>
-                      {photo.caption && (
-                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#052314]/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <p className="text-sm font-medium text-[#F4F9F6] truncate">{photo.caption}</p>
+            <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar relative">
+              {selectedPage && loadingPhotos[selectedPage.id] ? (
+                 <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-[#2B734D]" />
+                 </div>
+              ) : selectedPage && activePhotos.length === 0 ? (
+                 <div className="absolute inset-0 flex items-center justify-center text-[#2B734D]">
+                    Nenhuma imagem encontrada nesta página.
+                 </div>
+              ) : (
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedPage?.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
+                  >
+                    {activePhotos.map((photo, index) => (
+                      <div
+                        key={photo.id}
+                        className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-[#A4D2B8] cursor-pointer border border-[#B1D8C4]/50 shadow-sm hover:shadow-md transition-shadow"
+                        onClick={() => openLightbox(index)}
+                      >
+                        <Image
+                          src={photo.url}
+                          alt={photo.caption || 'Fotograma'}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100 sepia-[.4] mix-blend-multiply"
+                          referrerPolicy="no-referrer"
+                          unoptimized
+                        />
+                        <div className="absolute inset-0 bg-[#052314]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <ZoomIn className="w-8 h-8 text-[#F4F9F6]" />
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
+                        {photo.caption && (
+                          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#052314]/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-between">
+                            <p className="text-sm font-medium text-[#F4F9F6] truncate pr-2">{photo.caption}</p>
+                            {photo.documentUrl && <FileText className="w-4 h-4 text-[#F4F9F6] flex-shrink-0" />}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              )}
             </div>
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center text-[#2B734D]">
-            Selecione um álbum para visualizar.
+            {volumes.length > 0 ? "Selecione um álbum para visualizar os fotogramas." : ""}
           </div>
         )}
       </main>
@@ -218,7 +325,6 @@ export default function AlbunsPage() {
             className="fixed inset-0 z-50 flex items-center justify-center bg-[#052314]/95 backdrop-blur-sm p-4 md:p-10"
             onClick={closeLightbox}
           >
-            {/* Top Controls */}
             <div className="absolute top-6 right-6 flex items-center gap-4 z-50" onClick={(e) => e.stopPropagation()}>
               {currentPhoto.documentUrl && (
                 <a
@@ -241,7 +347,6 @@ export default function AlbunsPage() {
               </button>
             </div>
 
-            {/* Navigation Buttons */}
             {lightboxPhotoIndex !== null && lightboxPhotoIndex > 0 && (
               <button
                 className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 p-3 text-[#B1D8C4] hover:text-[#F4F9F6] bg-[#0E472D]/50 hover:bg-[#0E472D]/80 rounded-full transition-all z-50"
@@ -252,7 +357,7 @@ export default function AlbunsPage() {
               </button>
             )}
 
-            {lightboxPhotoIndex !== null && lightboxPhotoIndex < selectedPage.photos.length - 1 && (
+            {lightboxPhotoIndex !== null && lightboxPhotoIndex < activePhotos.length - 1 && (
               <button
                 className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 p-3 text-[#B1D8C4] hover:text-[#F4F9F6] bg-[#0E472D]/50 hover:bg-[#0E472D]/80 rounded-full transition-all z-50"
                 onClick={showNextPhoto}
@@ -307,6 +412,7 @@ export default function AlbunsPage() {
                               className="object-contain"
                               referrerPolicy="no-referrer"
                               draggable={false}
+                              unoptimized
                             />
                           </div>
                         </TransformComponent>
