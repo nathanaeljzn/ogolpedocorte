@@ -9,10 +9,6 @@ export const metadata: Metadata = {
   description: 'Arquivo e experimentações com fotogramas de cinema clássico.',
 };
 
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
-export const revalidate = 0;
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="scroll-smooth">
