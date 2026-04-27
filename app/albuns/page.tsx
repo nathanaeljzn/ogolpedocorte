@@ -28,6 +28,8 @@ export default function AlbunsPage() {
   const [loadingPages, setLoadingPages] = useState<Record<string, boolean>>({});
   const [loadingPhotos, setLoadingPhotos] = useState<Record<string, boolean>>({});
 
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   // 1. Load root volumes on mount
   useEffect(() => {
     fetch('/api/dropbox?folder=')
@@ -42,7 +44,9 @@ export default function AlbunsPage() {
           
           // Fallback manual para as capas dos volumes, já que estão armazenadas dentro de pastas filhas
           const MANUAL_COVERS: Record<string, string> = {
-             'VOLUME 1': 'https://dl.dropboxusercontent.com/scl/fi/hwgyjpwamg4av5q7cjzjb/CAPA-V1.jpg?rlkey=z9chzeh6as840a6xd40re6f74&raw=1'
+             'VOLUME 1': 'https://dl.dropboxusercontent.com/scl/fi/hwgyjpwamg4av5q7cjzjb/CAPA-V1.jpg?rlkey=z9chzeh6as840a6xd40re6f74&raw=1',
+             'VOLUME 2': 'https://dl.dropboxusercontent.com/scl/fi/uuvt3qntnchixr24dmb74/CAPA-V2.jpg?rlkey=t94h04hytz2065e8xtg2n5z2l&raw=1',
+             'VOLUME 3': 'https://dl.dropboxusercontent.com/scl/fi/ly0w4f595x2j5x4y9j829/CAPA-V3.jpg?rlkey=p80t3r1f8a846n8249o8u5k9u&raw=1'
           };
           
           const volsWithCovers = vols.map(v => ({
@@ -51,7 +55,13 @@ export default function AlbunsPage() {
           }));
           
           setVolumes(volsWithCovers);
+        } else {
+          setErrorMsg(data.error || 'Erro ao carregar dados do Dropbox.');
         }
+      })
+      .catch((e) => {
+        console.error(e);
+        setErrorMsg('Falha na comunicação com o servidor.');
       })
       .finally(() => setLoadingInitial(false));
   }, []);
@@ -188,6 +198,14 @@ export default function AlbunsPage() {
           {loadingInitial ? (
             <div className="flex items-center justify-center py-10">
               <Loader2 className="w-6 h-6 animate-spin text-[#2B734D]" />
+            </div>
+          ) : errorMsg ? (
+            <div className="text-sm text-red-600 text-center bg-red-100 p-4 rounded-lg">
+              <p className="font-semibold mb-2">Erro de Acesso</p>
+              <p>{errorMsg}</p>
+              {errorMsg.includes('Houve um erro buscando') && (
+                 <p className="mt-4 text-xs">O token do Dropbox pode estar expirado. Atualize o DROPBOX_ACCESS_TOKEN nas configurações.</p>
+              )}
             </div>
           ) : volumes.length === 0 ? (
             <div className="text-sm text-[#2B734D] text-center">Nenhum volume encontrado no Dropbox.</div>
