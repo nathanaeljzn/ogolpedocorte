@@ -29,40 +29,37 @@ export async function GET(request: Request) {
       );
 
       const imagesWithLinks = [];
-      
-      // Processa sequencialmente para evitar Rate Limits agressivos do Dropbox
-      for (const entry of imageEntries as any[]) {
-        let link = linkCache.get(entry.id) || '';
-        
-        if (!link) {
-          let retries = 3;
-          while (retries > 0 && !link) {
-            try {
-               const sharedLinks = await dbx.sharingListSharedLinks({ path: entry.id });
-               if (sharedLinks.result.links.length > 0) {
-                 link = sharedLinks.result.links[0].url;
-               } else {
-                 const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: entry.id });
-                 link = newLink.result.url;
-               }
-               link = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
-               linkCache.set(entry.id, link); // Salva no cache!
-            } catch(e: any) {
-               console.error("Error getting public link for", entry.name, e?.error || e);
-               retries--;
-               if (retries > 0) {
-                 // Espera 1 segundo antes de tentar de novo em caso de erro/rate limit
-                 await new Promise(r => setTimeout(r, 1000));
-               }
+      const BATCH_SIZE = 5;
+
+      const processBatch = async (entriesBatch: any[]) => {
+        return Promise.all(entriesBatch.map(async (entry: any) => {
+          let link = linkCache.get(entry.id) || '';
+          if (!link) {
+            let retries = 3;
+            while (retries > 0 && !link) {
+              try {
+                const sharedLinks = await dbx.sharingListSharedLinks({ path: entry.id });
+                if (sharedLinks.result.links.length > 0) {
+                  link = sharedLinks.result.links[0].url;
+                } else {
+                  const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: entry.id });
+                  link = newLink.result.url;
+                }
+                link = link.replace('dl=0', 'raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+                linkCache.set(entry.id, link); // Salva no cache!
+              } catch(e: any) {
+                console.error("Error getting public link for", entry.name, e?.error || e.message || e);
+                retries--;
+                if (retries > 0) await new Promise(r => setTimeout(r, 1000));
+              }
             }
           }
-        }
-        
-        imagesWithLinks.push({
-          id: entry.id,
-          name: entry.name,
-          url: link, // Pode ficar vazio se falhar todas as tentativas
-        });
+          return { id: entry.id, name: entry.name, url: link };
+        }));
+      };
+
+      for (let i = 0; i < imageEntries.length; i += BATCH_SIZE) {
+        imagesWithLinks.push(...await processBatch((imageEntries as any[]).slice(i, i + BATCH_SIZE)));
       }
       
       // Filter pdfs and docs (fichas)
@@ -73,40 +70,20 @@ export async function GET(request: Request) {
       
       const standaloneDocs = [];
 
-      for (const doc of docEntries) {
-         let link = linkCache.get((doc as any).id) || '';
-         if (!link) {
-           let retries = 3;
-           while (retries > 0 && !link) {
-             try {
-               const sharedLinks = await dbx.sharingListSharedLinks({ path: (doc as any).id });
-               if (sharedLinks.result.links.length > 0) {
-                 link = sharedLinks.result.links[0].url;
-               } else {
-                 const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: (doc as any).id });
-                 link = newLink.result.url;
-               }
-               link = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
-               linkCache.set((doc as any).id, link);
-             } catch(e: any) {
-               console.error("Error getting public link for doc", (doc as any).name, e?.error || e);
-               retries--;
-               if (retries > 0) {
-                 await new Promise(r => setTimeout(r, 1000));
-               }
-             }
+      for (let i = 0; i < docEntries.length; i += BATCH_SIZE) {
+         const batch = await processBatch(docEntries.slice(i, i + BATCH_SIZE));
+         for (const doc of batch) {
+           if (doc.url) {
+             const plainName = doc.name.replace(/\.[^/.]+$/, "");
+             docMap[plainName] = doc.url;
+             standaloneDocs.push({
+               id: doc.id,
+               name: doc.name,
+               url: doc.url,
+               documentUrl: doc.url,
+               isDoc: true
+             });
            }
-         }
-         if (link) {
-           const plainName = (doc as any).name.replace(/\.[^/.]+$/, "");
-           docMap[plainName] = link;
-           standaloneDocs.push({
-              id: (doc as any).id,
-              name: (doc as any).name,
-              url: link,
-              documentUrl: link,
-              isDoc: true
-           });
          }
       }
 

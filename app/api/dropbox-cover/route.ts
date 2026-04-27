@@ -49,7 +49,7 @@ export async function GET(request: Request) {
               const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: coverId });
               link = newLink.result.url;
             }
-            link = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+            link = link.replace('dl=0', 'raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
             return NextResponse.json({ success: true, coverUrl: link });
         } catch(e) { }
     }

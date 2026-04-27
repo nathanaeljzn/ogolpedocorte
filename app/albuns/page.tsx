@@ -85,8 +85,31 @@ export default function AlbunsPage() {
         const res = await fetch(`/api/dropbox?folder=${encodeURIComponent(volume.path)}`);
         const data = await res.json();
         if (data.success) {
-          // Sort albums alphabetically
-          const albums = (data.folders as DBNode[]).sort((a, b) => a.name.localeCompare(b.name));
+          // Filtrando álbuns indesejados
+          const ignoredAlbums = [
+            'paginas 01 a 50 album 06',
+            'album c3',
+            'paginas 01 a 50 c',
+            'paginas 01 a 50  album 06' // just in case additional spaces
+          ];
+          
+          let albums = (data.folders as DBNode[])
+            .filter(a => !ignoredAlbums.some(ignored => a.name.toLowerCase().includes(ignored)))
+            .map(a => {
+               // Formatar os nomes conforme solicitado (Fotogramas)
+               const lowerName = a.name.toLowerCase();
+               if (
+                 lowerName.includes('fotogramas tratados pra site') || 
+                 lowerName.includes('fotogramas album') ||
+                 lowerName.includes('fotogramas album c')
+               ) {
+                  return { ...a, name: 'Fotogramas' };
+               }
+               return a;
+            })
+            // Sort albums alphabetically
+            .sort((a, b) => a.name.localeCompare(b.name));
+            
           setAlbumsByVolume(prev => ({ ...prev, [volume.id]: albums }));
         }
       } finally {
