@@ -5,8 +5,8 @@ console.log("= ASSISTENTE PARA OBTER O REFRESH TOKEN =");
 console.log("==========================================\n");
 
 // Substitua manualmente aqui para facilitar
-const APP_KEY = process.env.DROPBOX_CLIENT_ID || 'COLE_AQUI_SUA_APP_KEY_SE_NAO_ESTIVER_NO_ENV';
-const APP_SECRET = process.env.DROPBOX_CLIENT_SECRET || 'COLE_AQUI_SEU_APP_SECRET_SE_NAO_ESTIVER_NO_ENV';
+const APP_KEY = process.env.DROPBOX_CLIENT_ID || '19nw8ainelh4x33';
+const APP_SECRET = process.env.DROPBOX_CLIENT_SECRET || 'ycm0kmvdziqrv6r';
 
 async function principal() {
   if (APP_KEY === 'COLE_AQUI_SUA_APP_KEY_SE_NAO_ESTIVER_NO_ENV') {
