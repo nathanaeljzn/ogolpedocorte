@@ -34,9 +34,9 @@ export default function AlbunsPage() {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          // Temporariamente filtrando apenas pelo "VOLUME 1". Pode ser desfeito depois solicitando para mostrar todos.
+          // Filtrando todas as pastas que começam com "VOL"
           const vols = (data.folders as DBNode[]).filter(f => 
-            f.name.toUpperCase().startsWith('VOL') && f.name.toUpperCase().includes('VOLUME 1')
+            f.name.toUpperCase().startsWith('VOL')
           );
           vols.sort((a, b) => a.name.localeCompare(b.name));
           
