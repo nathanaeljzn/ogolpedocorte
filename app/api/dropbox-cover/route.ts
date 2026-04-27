@@ -27,9 +27,10 @@ export async function GET(request: Request) {
              const inner = await dbx.filesListFolder({ path: entry.path_lower || `${volumePath}/${entry.name}`, shared_link: sl });
              for (const f of inner.result.entries) {
                 if (f['.tag'] === 'file' && f.name.match(/\.(jpg|png|jpeg)$/i)) {
-                   if (f.name.toLowerCase().includes('capa') || f.name.toLowerCase().includes('v2')) {
+                   if (f.name.toLowerCase() === 'capa.jpg' || f.name.toLowerCase() === 'v2.jpg') {
                       coverId = f.id;
-                      break;
+                   } else if (!coverId && (f.name.toLowerCase().includes('capa') || f.name.toLowerCase().includes('v2'))) {
+                      coverId = f.id;
                    }
                 }
              }
