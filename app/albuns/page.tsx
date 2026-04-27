@@ -51,10 +51,26 @@ export default function AlbunsPage() {
           
           const volsWithCovers = vols.map(v => ({
              ...v,
+             name: v.name.replace(/VOLUME/i, 'Álbum'),
              coverUrl: v.coverUrl || MANUAL_COVERS[v.name.toUpperCase()] || undefined
           }));
           
           setVolumes(volsWithCovers);
+
+          // Tentar carregar as capas ausentes em background:
+          volsWithCovers.forEach(vol => {
+             if (!vol.coverUrl) {
+                fetch(`/api/dropbox-cover?volumePath=${encodeURIComponent(vol.path)}`)
+                  .then(r => r.json())
+                  .then(c => {
+                     if (c.success && c.coverUrl) {
+                        setVolumes(currentVols => 
+                          currentVols.map(cv => cv.id === vol.id ? { ...cv, coverUrl: c.coverUrl } : cv)
+                        );
+                     }
+                  }).catch(() => {});
+             }
+          });
         } else {
           setErrorMsg(data.error || 'Erro ao carregar dados do Dropbox.');
         }
@@ -131,7 +147,8 @@ export default function AlbunsPage() {
             id: f.id,
             url: f.url,
             caption: f.name,
-            documentUrl: f.documentUrl
+            documentUrl: f.documentUrl,
+            isDoc: f.isDoc
           }));
           // Sort photos by name
           photos.sort((a, b) => (a.caption || '').localeCompare(b.caption || ''));
@@ -222,7 +239,7 @@ export default function AlbunsPage() {
                         src={volume.coverUrl}
                         alt={`Capa do ${volume.name}`}
                         fill
-                        className="object-cover sepia-[.2] mix-blend-multiply opacity-90"
+                        className="object-cover"
                         unoptimized
                       />
                     </div>
@@ -309,7 +326,7 @@ export default function AlbunsPage() {
                  </div>
               ) : selectedPage && activePhotos.length === 0 ? (
                  <div className="absolute inset-0 flex items-center justify-center text-[#2B734D]">
-                    Nenhuma imagem encontrada nesta página.
+                    Nenhum conteúdo encontrado nesta pasta.
                  </div>
               ) : (
                 <AnimatePresence mode="wait">
@@ -321,31 +338,45 @@ export default function AlbunsPage() {
                     transition={{ duration: 0.3 }}
                     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
                   >
-                    {activePhotos.map((photo, index) => (
+                    {activePhotos.map((photo, index) => {
+                      const isPdfDoc = photo.url && (photo as any).isDoc;
+                      return (
                       <div
                         key={photo.id}
                         className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-[#A4D2B8] cursor-pointer border border-[#B1D8C4]/50 shadow-sm hover:shadow-md transition-shadow"
-                        onClick={() => openLightbox(index)}
+                        onClick={() => {
+                           if (isPdfDoc) window.open(photo.url, '_blank');
+                           else openLightbox(index);
+                        }}
                       >
-                        <Image
-                          src={photo.url}
-                          alt={photo.caption || 'Fotograma'}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100 sepia-[.4] mix-blend-multiply"
-                          referrerPolicy="no-referrer"
-                          unoptimized
-                        />
-                        <div className="absolute inset-0 bg-[#052314]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <ZoomIn className="w-8 h-8 text-[#F4F9F6]" />
-                        </div>
-                        {photo.caption && (
-                          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#052314]/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-between">
-                            <p className="text-sm font-medium text-[#F4F9F6] truncate pr-2">{photo.caption}</p>
-                            {photo.documentUrl && <FileText className="w-4 h-4 text-[#F4F9F6] flex-shrink-0" />}
-                          </div>
+                        {isPdfDoc ? (
+                           <div className="w-full h-full flex flex-col items-center justify-center bg-[#E3F0E9] text-[#0E472D]">
+                             <FileText className="w-16 h-16 mb-4 text-[#2B734D]" />
+                             <span className="font-medium text-center px-4 break-words truncate max-w-full">{photo.caption}</span>
+                           </div>
+                        ) : (
+                          <>
+                            <Image
+                              src={photo.url}
+                              alt={photo.caption || 'Fotograma'}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                              referrerPolicy="no-referrer"
+                              unoptimized
+                            />
+                            <div className="absolute inset-0 bg-[#052314]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                              <ZoomIn className="w-8 h-8 text-[#F4F9F6]" />
+                            </div>
+                            {photo.caption && (
+                              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-[#052314]/90 to-transparent flex items-center justify-between">
+                                <p className="text-sm font-medium text-[#F4F9F6] truncate pr-2">{photo.caption}</p>
+                                {photo.documentUrl && <FileText className="w-4 h-4 text-[#F4F9F6] flex-shrink-0" />}
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
-                    ))}
+                    )})}
                   </motion.div>
                 </AnimatePresence>
               )}

@@ -24,7 +24,7 @@ async function principal() {
   
   // Substitua a string abaixo com o código que apareceu no site.
   // Quando preencher, execute este script com: npx tsx scripts/get_refresh_token.ts
-  const CODIGO_GERADO_NO_SITE = '';
+  const CODIGO_GERADO_NO_SITE = 'g0imWcjJVYQAAAAAAAAIcH2C8F7a0HVGLArulaoTo44';
 
   if (!CODIGO_GERADO_NO_SITE) {
     return;
