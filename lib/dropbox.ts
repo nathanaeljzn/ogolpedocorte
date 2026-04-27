@@ -1,9 +1,24 @@
 import { Dropbox } from 'dropbox';
 
 export const getDropboxClient = () => {
+  const refreshToken = process.env.DROPBOX_REFRESH_TOKEN;
+  const clientId = process.env.DROPBOX_CLIENT_ID;
+  const clientSecret = process.env.DROPBOX_CLIENT_SECRET;
+  
+  // Se tiver a configuração de Refresh Token, isso cuidará da renovação automática.
+  if (refreshToken && clientId && clientSecret) {
+    return new Dropbox({
+      clientId,
+      clientSecret,
+      refreshToken,
+      fetch
+    });
+  }
+
+  // Fallback para o token temporário (se o usuário não usar refresh token ainda)
   const accessToken = process.env.DROPBOX_ACCESS_TOKEN;
   if (!accessToken) {
-    throw new Error('A variável DROPBOX_ACCESS_TOKEN não está configurada.');
+    throw new Error('Você precisa configurar DROPBOX_REFRESH_TOKEN, DROPBOX_CLIENT_ID e DROPBOX_CLIENT_SECRET para a API funcionar (ou DROPBOX_ACCESS_TOKEN como fallback temporário).');
   }
 
   // Next.js (App Router) fetch is natively supported
