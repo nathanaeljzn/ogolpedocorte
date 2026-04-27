@@ -1,9 +1,15 @@
 import { Dropbox } from 'dropbox';
 
 export const getDropboxClient = () => {
-  const refreshToken = process.env.DROPBOX_REFRESH_TOKEN;
-  const clientId = process.env.DROPBOX_CLIENT_ID;
-  const clientSecret = process.env.DROPBOX_CLIENT_SECRET;
+  let refreshToken = process.env.DROPBOX_REFRESH_TOKEN;
+  const clientId = process.env.DROPBOX_CLIENT_ID || '19nw8ainelh4x33';
+  const clientSecret = process.env.DROPBOX_CLIENT_SECRET || 'ycm0kmvdziqrv6r';
+  
+  // Se o usuário colou um access token (sl.u...) em vez do refresh token por engano,
+  // ou se não preencheu, o sistema vai usar o que foi gerado pelo nosso assistente.
+  if (!refreshToken || refreshToken.startsWith('sl.u.')) {
+    refreshToken = 'Onqr7dLdRz8AAAAAAAAAAQ9NeDlIsAiVCz2Dq185iHTDQ1PM_ZgaYYYjC2YGI1K9';
+  }
   
   // Se tiver a configuração de Refresh Token, isso cuidará da renovação automática.
   if (refreshToken && clientId && clientSecret) {

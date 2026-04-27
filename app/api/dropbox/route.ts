@@ -170,9 +170,9 @@ export async function GET(request: Request) {
     }
     
   } catch (error: any) {
-    console.error("Dropbox API Error:", error?.error || error);
+    console.error("Dropbox API Error:", error?.error || error, error.stack);
     return NextResponse.json(
-      { success: false, error: 'Houve um erro buscando arquivos no Dropbox.' },
+      { success: false, error: 'Houve um erro buscando arquivos no Dropbox.', details: error?.error || error.message },
       { status: 500 }
     );
   }
