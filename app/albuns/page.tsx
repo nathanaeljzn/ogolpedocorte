@@ -223,6 +223,12 @@ export default function AlbunsPage() {
               {errorMsg.includes('Houve um erro buscando') && (
                  <p className="mt-4 text-xs">O token do Dropbox pode estar expirado. Atualize o DROPBOX_ACCESS_TOKEN nas configurações.</p>
               )}
+              <button 
+                onClick={() => window.location.reload()}
+                className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md w-full font-medium shadow-sm hover:bg-red-700 transition"
+              >
+                 Recarregar Página
+              </button>
             </div>
           ) : volumes.length === 0 ? (
             <div className="text-sm text-[#2B734D] text-center">Nenhum volume encontrado no Dropbox.</div>
