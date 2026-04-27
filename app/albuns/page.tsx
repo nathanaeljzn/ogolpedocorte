@@ -42,17 +42,9 @@ export default function AlbunsPage() {
           );
           vols.sort((a, b) => a.name.localeCompare(b.name));
           
-          // Fallback manual para as capas dos volumes, já que estão armazenadas dentro de pastas filhas
-          const MANUAL_COVERS: Record<string, string> = {
-             'VOLUME 1': 'https://dl.dropboxusercontent.com/scl/fi/hwgyjpwamg4av5q7cjzjb/CAPA-V1.jpg?rlkey=z9chzeh6as840a6xd40re6f74&raw=1',
-             'VOLUME 2': 'https://dl.dropboxusercontent.com/scl/fi/uuvt3qntnchixr24dmb74/CAPA-V2.jpg?rlkey=t94h04hytz2065e8xtg2n5z2l&raw=1',
-             'VOLUME 3': 'https://dl.dropboxusercontent.com/scl/fi/ly0w4f595x2j5x4y9j829/CAPA-V3.jpg?rlkey=p80t3r1f8a846n8249o8u5k9u&raw=1'
-          };
-          
           const volsWithCovers = vols.map(v => ({
              ...v,
              name: v.name.replace(/VOLUME/i, 'Álbum'),
-             coverUrl: v.coverUrl || MANUAL_COVERS[v.name.toUpperCase()] || undefined
           }));
           
           setVolumes(volsWithCovers);
