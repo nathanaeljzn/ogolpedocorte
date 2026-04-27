@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getDropboxClient } from '@/lib/dropbox';
 
+// Cache em memória para evitar Rate Limit e lentidão no Dropbox API (resiste até o servidor reiniciar)
+const linkCache = new Map<string, string>();
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -23,28 +26,38 @@ export async function GET(request: Request) {
         entry['.tag'] === 'file' && entry.name.match(/\.(jpg|jpeg|png|gif)$/i)
       );
 
-      const imagesWithLinks = await Promise.all(
-        imageEntries.map(async (entry: any) => {
-          let link = '';
-          try {
-             const sharedLinks = await dbx.sharingListSharedLinks({ path: entry.id });
-             if (sharedLinks.result.links.length > 0) {
-               link = sharedLinks.result.links[0].url;
-             } else {
-               const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: entry.id });
-               link = newLink.result.url;
-             }
-             link = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
-          } catch(e) {
-             console.error("Error getting public link for", entry.name);
-          }
-          return {
-            id: entry.id,
-            name: entry.name,
-            url: link,
-          };
-        })
-      );
+      const imagesWithLinks = [];
+      const batchSize = 5; // Ajuda a evitar Rate Limits
+      
+      for (let i = 0; i < imageEntries.length; i += batchSize) {
+        const batch = imageEntries.slice(i, i + batchSize);
+        const batchResult = await Promise.all(
+          batch.map(async (entry: any) => {
+            let link = linkCache.get(entry.id) || '';
+            if (!link) {
+              try {
+                 const sharedLinks = await dbx.sharingListSharedLinks({ path: entry.id });
+                 if (sharedLinks.result.links.length > 0) {
+                   link = sharedLinks.result.links[0].url;
+                 } else {
+                   const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: entry.id });
+                   link = newLink.result.url;
+                 }
+                 link = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+                 linkCache.set(entry.id, link); // Salva no cache!
+              } catch(e) {
+                 console.error("Error getting public link for", entry.name);
+              }
+            }
+            return {
+              id: entry.id,
+              name: entry.name,
+              url: link, // Pode ficar vazio se estourou limite max, aí ele não tenta mais
+            };
+          })
+        );
+        imagesWithLinks.push(...batchResult);
+      }
       
       // Filter pdfs (fichas)
       const pdfEntries = response.result.entries.filter((entry: any) => 
@@ -54,17 +67,23 @@ export async function GET(request: Request) {
       
       // Match PDF map if they exist for specific images
       for (const pdf of pdfEntries) {
-         try {
-           const sharedLinks = await dbx.sharingListSharedLinks({ path: (pdf as any).id });
-           let link = '';
-           if (sharedLinks.result.links.length > 0) {
-             link = sharedLinks.result.links[0].url;
-           } else {
-             const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: (pdf as any).id });
-             link = newLink.result.url;
-           }
-           pdfMap[(pdf as any).name.replace('.pdf', '')] = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
-         } catch(e) {}
+         let link = linkCache.get((pdf as any).id) || '';
+         if (!link) {
+           try {
+             const sharedLinks = await dbx.sharingListSharedLinks({ path: (pdf as any).id });
+             if (sharedLinks.result.links.length > 0) {
+               link = sharedLinks.result.links[0].url;
+             } else {
+               const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: (pdf as any).id });
+               link = newLink.result.url;
+             }
+             link = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+             linkCache.set((pdf as any).id, link);
+           } catch(e) {}
+         }
+         if (link) {
+           pdfMap[(pdf as any).name.replace('.pdf', '')] = link;
+         }
       }
 
       const finalImages = imagesWithLinks.map(img => ({
@@ -95,15 +114,20 @@ export async function GET(request: Request) {
            const match = cover.name.match(/CAPA V(\d+)/i);
            if (match) {
              const volNum = match[1];
-             const sharedLinks = await dbx.sharingListSharedLinks({ path: (cover as any).id });
-             let link = '';
-             if (sharedLinks.result.links.length > 0) {
-               link = sharedLinks.result.links[0].url;
-             } else {
-               const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: (cover as any).id });
-               link = newLink.result.url;
+             let link = linkCache.get((cover as any).id) || '';
+             
+             if (!link) {
+               const sharedLinks = await dbx.sharingListSharedLinks({ path: (cover as any).id });
+               if (sharedLinks.result.links.length > 0) {
+                 link = sharedLinks.result.links[0].url;
+               } else {
+                 const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: (cover as any).id });
+                 link = newLink.result.url;
+               }
+               link = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+               linkCache.set((cover as any).id, link);
              }
-             coverMap[`VOLUME ${volNum}`] = link.replace('?dl=0', '?raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+             coverMap[`VOLUME ${volNum}`] = link;
            }
          } catch(e) {}
       }
