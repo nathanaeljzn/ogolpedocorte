@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDropboxClient } from '@/lib/dropbox';
 
+export const dynamic = 'force-dynamic';
+
 // Cache em memória para evitar Rate Limit e lentidão no Dropbox API (resiste até o servidor reiniciar)
 const linkCache = new Map<string, string>();
 

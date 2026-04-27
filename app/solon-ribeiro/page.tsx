@@ -19,7 +19,7 @@ export default function SolonRibeiroPage() {
             src="https://picsum.photos/seed/solon-full/1200/600?grayscale"
             alt="Solon Ribeiro"
             fill
-            className="object-cover opacity-90 sepia-[.3] mix-blend-multiply"
+            className="object-cover opacity-90"
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 ring-1 ring-inset ring-[#0E472D]/10 rounded-2xl" />
