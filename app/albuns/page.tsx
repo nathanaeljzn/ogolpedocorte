@@ -192,8 +192,8 @@ export default function AlbunsPage() {
             const getCaption = (item: any) => item.caption || '';
             const capA = getCaption(a);
             const capB = getCaption(b);
-            const isNumA = /^0*\d+\.[a-zA-Z]+$/i.test(capA);
-            const isNumB = /^0*\d+\.[a-zA-Z]+$/i.test(capB);
+            const isNumA = /^(p|pg|pag|pagina)?_?0*\d+\.[a-zA-Z]+$/i.test(capA);
+            const isNumB = /^(p|pg|pag|pagina)?_?0*\d+\.[a-zA-Z]+$/i.test(capB);
             
             if (isNumA && !isNumB) return -1;
             if (!isNumA && isNumB) return 1;
