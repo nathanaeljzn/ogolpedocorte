@@ -36,6 +36,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   const isDoc = searchParams.get('doc') === 'true';
+  const isDirect = searchParams.get('direct') === 'true';
 
   if (!id) {
     return new NextResponse('Missing id', { status: 400 });
@@ -44,6 +45,9 @@ export async function GET(request: Request) {
   // Check cache first
   const cachedLink = linkCache.get(id);
   if (cachedLink) {
+    if (isDirect) {
+      return NextResponse.json({ url: cachedLink });
+    }
     return NextResponse.redirect(cachedLink, 302);
   }
 
@@ -72,7 +76,7 @@ export async function GET(request: Request) {
     });
     
     // Format link to download original raw file
-    if (!isDoc) {
+    if (!isDoc || isDirect) {
       link = link.replace('dl=0', 'raw=1')
                  .replace('?dl=0', '?raw=1')
                  .replace('www.dropbox.com', 'dl.dropboxusercontent.com');
@@ -80,6 +84,9 @@ export async function GET(request: Request) {
                
     linkCache.set(id, link);
     
+    if (isDirect) {
+      return NextResponse.json({ url: link });
+    }
     return NextResponse.redirect(link, 302);
   } catch (error: any) {
     console.error('Error fetching dropbox image:', id, error?.error || error.message || error);

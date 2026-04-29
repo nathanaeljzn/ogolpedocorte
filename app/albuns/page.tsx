@@ -22,6 +22,7 @@ export default function AlbunsPage() {
   
   const [photosByPage, setPhotosByPage] = useState<Record<string, Photo[]>>({});
   const [lightboxPhotoIndex, setLightboxPhotoIndex] = useState<number | null>(null);
+  const [docDirectUrls, setDocDirectUrls] = useState<Record<string, string>>({});
 
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadingAlbums, setLoadingAlbums] = useState<Record<string, boolean>>({});
@@ -236,6 +237,23 @@ export default function AlbunsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [lightboxPhotoIndex, showNextPhoto, showPrevPhoto]);
 
+  // Fetch direct URL for documents in lightbox
+  useEffect(() => {
+    if (lightboxPhotoIndex !== null && selectedPage) {
+       const photo = photosByPage[selectedPage.id]?.[lightboxPhotoIndex];
+       if (photo && (photo as any).isDoc && !docDirectUrls[photo.id]) {
+         fetch(`${photo.url}&direct=true`)
+            .then(r => r.json())
+            .then(data => {
+               if (data.url) {
+                  setDocDirectUrls(prev => ({ ...prev, [photo.id]: data.url }));
+               }
+            })
+            .catch(console.error);
+       }
+    }
+  }, [lightboxPhotoIndex, selectedPage, photosByPage, docDirectUrls]);
+
   const currentPhoto = lightboxPhotoIndex !== null ? activePhotos[lightboxPhotoIndex] : null;
 
   return (
@@ -399,8 +417,7 @@ export default function AlbunsPage() {
                         key={photo.id}
                         className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-[#A4D2B8] cursor-pointer border border-zinc-300/50 shadow-sm hover:shadow-md transition-shadow"
                         onClick={() => {
-                           if (isPdfDoc) window.open(photo.url, '_blank');
-                           else openLightbox(index);
+                           openLightbox(index);
                         }}
                       >
                         {isPdfDoc ? (
@@ -511,6 +528,22 @@ export default function AlbunsPage() {
                   transition={{ duration: 0.2 }}
                   className="w-full h-full"
                 >
+                  {(currentPhoto as any).isDoc ? (
+                    <div className="w-full h-full bg-zinc-50 flex items-center justify-center relative">
+                       {docDirectUrls[currentPhoto.id] ? (
+                          <iframe
+                             src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(docDirectUrls[currentPhoto.id])}`}
+                             className="w-full h-full border-none"
+                             title={currentPhoto.caption}
+                          />
+                       ) : (
+                          <div className="flex flex-col items-center justify-center text-zinc-500">
+                             <Loader2 className="w-8 h-8 animate-spin mb-4" />
+                             <p>Carregando ficha...</p>
+                          </div>
+                       )}
+                    </div>
+                  ) : (
                   <TransformWrapper
                     initialScale={1}
                     minScale={0.5}
@@ -547,10 +580,11 @@ export default function AlbunsPage() {
                       </>
                     )}
                   </TransformWrapper>
+                  )}
                 </motion.div>
               </AnimatePresence>
 
-              {currentPhoto.caption && (
+              {currentPhoto.caption && !(currentPhoto as any).isDoc && (
                 <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#052314] via-[#052314]/80 to-transparent pointer-events-none z-40">
                   <p className="text-lg font-medium text-zinc-50 text-center">{currentPhoto.caption}</p>
                 </div>
