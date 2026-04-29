@@ -186,8 +186,8 @@ export default function AlbunsPage() {
             documentUrl: f.documentUrl,
             isDoc: f.isDoc
           }));
-          // Sort photos by name
-          photos.sort((a, b) => (a.caption || '').localeCompare(b.caption || ''));
+          // Sort photos by name (natural sort)
+          photos.sort((a, b) => (a.caption || '').localeCompare(b.caption || '', undefined, { numeric: true, sensitivity: 'base' }));
           setPhotosByPage(prev => ({ ...prev, [page.id]: photos }));
         }
       } finally {

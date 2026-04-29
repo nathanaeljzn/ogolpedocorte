@@ -35,6 +35,7 @@ async function executeDropboxWithLimit<T>(fn: () => Promise<T>): Promise<T> {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
+  const isDoc = searchParams.get('doc') === 'true';
 
   if (!id) {
     return new NextResponse('Missing id', { status: 400 });
@@ -71,9 +72,11 @@ export async function GET(request: Request) {
     });
     
     // Format link to download original raw file
-    link = link.replace('dl=0', 'raw=1')
-               .replace('?dl=0', '?raw=1')
-               .replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+    if (!isDoc) {
+      link = link.replace('dl=0', 'raw=1')
+                 .replace('?dl=0', '?raw=1')
+                 .replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+    }
                
     linkCache.set(id, link);
     

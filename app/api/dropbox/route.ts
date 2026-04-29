@@ -37,7 +37,7 @@ export async function GET(request: Request) {
       const standaloneDocs = [];
 
       for (const doc of docEntries as any[]) {
-         const url = `/api/dropbox-image?id=${encodeURIComponent(doc.id)}`;
+         const url = `/api/dropbox-image?id=${encodeURIComponent(doc.id)}&doc=true`;
          const plainName = doc.name.replace(/\.[^/.]+$/, "");
          docMap[plainName] = url;
          standaloneDocs.push({
