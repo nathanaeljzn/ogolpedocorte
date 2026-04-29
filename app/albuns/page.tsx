@@ -105,10 +105,19 @@ export default function AlbunsPage() {
                ) {
                   return { ...a, name: 'Fotogramas' };
                }
+               if (lowerName === 'filmes' || lowerName === 'fichas') {
+                  return { ...a, name: 'Fichas' };
+               }
                return a;
             })
-            // Sort albums alphabetically
-            .sort((a, b) => a.name.localeCompare(b.name));
+            // Sort albums: Fotogramas first, then Fichas, then others
+            .sort((a, b) => {
+               if (a.name === 'Fotogramas' && b.name !== 'Fotogramas') return -1;
+               if (b.name === 'Fotogramas' && a.name !== 'Fotogramas') return 1;
+               if (a.name === 'Fichas' && b.name !== 'Fichas') return -1;
+               if (b.name === 'Fichas' && a.name !== 'Fichas') return 1;
+               return a.name.localeCompare(b.name);
+            });
             
           setAlbumsByVolume(prev => ({ ...prev, [volume.id]: albums }));
         }
@@ -130,10 +139,11 @@ export default function AlbunsPage() {
         const data = await res.json();
         if (data.success) {
           // Sort numeric pages naturally
-          const pages = (data.folders as DBNode[])
+          let pages = (data.folders as DBNode[])
             .map(p => {
-               const match = p.name.match(/\d+/);
-               const num = match ? parseInt(match[0], 10) : 0;
+               const matches = p.name.match(/\d+/g);
+               const numStr = matches ? matches[matches.length - 1] : null;
+               const num = numStr ? parseInt(numStr, 10) : 0;
                return { ...p, name: num > 0 ? `Página ${num}` : p.name };
             })
             .sort((a, b) => {
@@ -141,6 +151,11 @@ export default function AlbunsPage() {
                const numB = parseInt(b.name.replace(/\D/g, '')) || 0;
                return numA - numB;
             });
+            
+          if (pages.length === 0) {
+            pages = [{ ...album, name: 'Arquivos' }];
+          }
+
           setPagesByAlbum(prev => ({ ...prev, [album.id]: pages }));
           if (pages.length > 0) {
             handlePageClick(pages[0]);
@@ -215,14 +230,14 @@ export default function AlbunsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900 flex flex-col md:flex-row">
-      <div className="md:hidden flex items-center p-4 border-b border-zinc-300/50 bg-zinc-100 sticky top-0 z-40">
+      <div className="md:hidden flex items-center p-4 border-b border-zinc-300/50 bg-zinc-50 sticky top-0 z-40">
         <Link href="/" className="flex items-center text-sm text-zinc-800 hover:text-zinc-900 transition-colors font-medium">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Voltar ao Início
         </Link>
       </div>
 
-      <aside className="w-full md:w-80 border-r border-zinc-300/50 bg-zinc-100 flex-shrink-0 md:h-screen md:sticky md:top-0 overflow-y-auto custom-scrollbar">
+      <aside className="w-full md:w-80 border-r border-zinc-300/50 bg-zinc-50 flex-shrink-0 md:h-screen md:sticky md:top-0 overflow-y-auto custom-scrollbar">
         <div className="p-6 hidden md:block">
           <Link href="/" className="inline-flex items-center text-sm text-zinc-800 hover:text-zinc-900 transition-colors mb-8 font-medium">
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -322,28 +337,30 @@ export default function AlbunsPage() {
       <main className="flex-1 flex flex-col min-h-[50vh] md:h-screen overflow-hidden bg-zinc-50">
         {selectedAlbum ? (
           <>
-            <header className="p-6 border-b border-zinc-300/50 bg-zinc-100/50 backdrop-blur-md flex-shrink-0">
+            <header className="p-6 border-b border-zinc-300/50 bg-zinc-50/80 backdrop-blur-md flex-shrink-0 z-10 sticky top-0">
               <h2 className="text-2xl font-display font-bold text-zinc-900">{selectedAlbum.name}</h2>
               
-              <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2 custom-scrollbar">
-                {loadingPages[selectedAlbum.id] ? (
-                  <Loader2 className="w-5 h-5 animate-spin text-zinc-800" />
-                ) : (
-                  pagesByAlbum[selectedAlbum.id]?.map((page) => (
-                    <button
-                      key={page.id}
-                      onClick={() => handlePageClick(page)}
-                      className={`px-4 py-1.5 text-sm rounded-full whitespace-nowrap transition-all ${
-                        selectedPage?.id === page.id
-                          ? 'bg-[#9B111E] text-zinc-50 ring-1 ring-zinc-900/20 shadow-md'
-                          : 'bg-transparent text-zinc-800 hover:text-zinc-900 border border-zinc-300/50 hover:bg-zinc-100'
-                      }`}
-                    >
-                      {page.name}
-                    </button>
-                  ))
-                )}
-              </div>
+              {!(pagesByAlbum[selectedAlbum.id]?.length === 1 && pagesByAlbum[selectedAlbum.id]?.[0].name === 'Arquivos') && (
+                <div className="flex items-center gap-2 mt-6 overflow-x-auto pb-2 custom-scrollbar">
+                  {loadingPages[selectedAlbum.id] ? (
+                    <Loader2 className="w-5 h-5 animate-spin text-zinc-800" />
+                  ) : (
+                    pagesByAlbum[selectedAlbum.id]?.map((page) => (
+                      <button
+                        key={page.id}
+                        onClick={() => handlePageClick(page)}
+                        className={`px-4 py-1.5 text-sm rounded-full whitespace-nowrap transition-all ${
+                          selectedPage?.id === page.id
+                            ? 'bg-[#9B111E] text-zinc-50 ring-1 ring-zinc-900/20 shadow-md'
+                            : 'bg-transparent text-zinc-800 hover:text-zinc-900 border border-zinc-300/50 hover:bg-zinc-100'
+                        }`}
+                      >
+                        {page.name}
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
             </header>
 
             <div className="flex-1 overflow-y-auto p-6 md:p-10 custom-scrollbar relative">
