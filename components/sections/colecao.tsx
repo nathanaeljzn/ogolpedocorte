@@ -25,12 +25,18 @@ export function Colecao() {
               O acervo conta mais de trinta mil fotogramas de cinema (décadas de 20 a 60) é constituído de 6.000 fotogramas catalogados e 25.000 que ainda não foram catalogados. Fazem parte da coleção, clássicos do cinema como: Judy Garland em O Mágico de Oz, Humphrey Bogart e Ingrid Bergman em Casablanca, Marlon Brando em O Selvagem, e quase mil fotogramas do cinema nacional.
             </p>
           </div>
-          <div className="mt-10">
+          <div className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/albuns"
               className="inline-flex items-center justify-center h-12 px-8 font-medium text-zinc-50 bg-[#9B111E] rounded-full hover:bg-[#7A0D18] transition-colors shadow-lg shadow-zinc-900/20"
             >
               Folhear Álbuns
+            </Link>
+            <Link
+              href="/sobre-a-colecao"
+              className="inline-flex items-center justify-center h-12 px-8 font-medium text-zinc-900 bg-transparent rounded-full border-2 border-zinc-900 hover:bg-zinc-200 transition-colors"
+            >
+              Saiba mais
             </Link>
           </div>
         </motion.div>
