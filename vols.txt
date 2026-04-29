@@ -1,0 +1,22 @@
+Fetching url: http://localhost:3000/api/dropbox?folder=%2FVOLUME%201%2FALBUM%20V1.%20fotogramas%20tratados%20pra%20site.%20%20paginas%2001%20a%2050
+Result pages: 50 folders.
+Data folders sample: [
+  {
+    id: 'id:C8s-5M1KimcAAAAAAAAXHg',
+    name: 'pagina 1',
+    path: '/VOLUME 1/ALBUM V1. fotogramas tratados pra site.  paginas 01 a 50/pagina 1',
+    coverUrl: null
+  },
+  {
+    id: 'id:C8s-5M1KimcAAAAAAAAXJA',
+    name: 'pagina 10',
+    path: '/VOLUME 1/ALBUM V1. fotogramas tratados pra site.  paginas 01 a 50/pagina 10',
+    coverUrl: null
+  },
+  {
+    id: 'id:C8s-5M1KimcAAAAAAAAXIw',
+    name: 'pagina 11',
+    path: '/VOLUME 1/ALBUM V1. fotogramas tratados pra site.  paginas 01 a 50/pagina 11',
+    coverUrl: null
+  }
+]

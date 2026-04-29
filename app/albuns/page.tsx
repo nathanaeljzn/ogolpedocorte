@@ -186,8 +186,18 @@ export default function AlbunsPage() {
             documentUrl: f.documentUrl,
             isDoc: f.isDoc
           }));
-          // Sort photos by name (natural sort)
-          photos.sort((a, b) => (a.caption || '').localeCompare(b.caption || '', undefined, { numeric: true, sensitivity: 'base' }));
+          // Sort photos by name (natural sort, numbers first)
+          photos.sort((a, b) => {
+            const getCaption = (item: any) => item.caption || '';
+            const capA = getCaption(a);
+            const capB = getCaption(b);
+            const isNumA = /^0*\d+\.[a-zA-Z]+$/i.test(capA);
+            const isNumB = /^0*\d+\.[a-zA-Z]+$/i.test(capB);
+            
+            if (isNumA && !isNumB) return -1;
+            if (!isNumA && isNumB) return 1;
+            return capA.localeCompare(capB, undefined, { numeric: true, sensitivity: 'base' });
+          });
           setPhotosByPage(prev => ({ ...prev, [page.id]: photos }));
         }
       } finally {
