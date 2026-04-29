@@ -7,7 +7,7 @@ import { Footer } from '@/components/ui/footer';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#F4F9F6] text-[#0E472D] selection:bg-[#0E472D] selection:text-[#F4F9F6]">
+    <main className="min-h-screen bg-zinc-50 text-zinc-900 selection:bg-zinc-900 selection:text-zinc-50">
       <Navbar />
       <Apresentacao />
       <Colecao />

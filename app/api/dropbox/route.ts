@@ -22,76 +22,40 @@ export async function GET(request: Request) {
       shared_link: { url: sharedLink }
     });
 
-    if (getImages) {
+      if (getImages) {
       // Filter only images
       const imageEntries = response.result.entries.filter((entry: any) => 
         entry['.tag'] === 'file' && entry.name.match(/\.(jpg|jpeg|png|gif)$/i)
       );
 
-      const imagesWithLinks = [];
-      const BATCH_SIZE = 5;
-
-      const processBatch = async (entriesBatch: any[]) => {
-        return Promise.all(entriesBatch.map(async (entry: any) => {
-          let link = linkCache.get(entry.id) || '';
-          if (!link) {
-            let retries = 3;
-            while (retries > 0 && !link) {
-              try {
-                const sharedLinks = await dbx.sharingListSharedLinks({ path: entry.id });
-                if (sharedLinks.result.links.length > 0) {
-                  link = sharedLinks.result.links[0].url;
-                } else {
-                  const newLink = await dbx.sharingCreateSharedLinkWithSettings({ path: entry.id });
-                  link = newLink.result.url;
-                }
-                link = link.replace('dl=0', 'raw=1').replace('www.dropbox.com', 'dl.dropboxusercontent.com');
-                linkCache.set(entry.id, link); // Salva no cache!
-              } catch(e: any) {
-                console.error("Error getting public link for", entry.name, e?.error || e.message || e);
-                retries--;
-                if (retries > 0) await new Promise(r => setTimeout(r, 1000));
-              }
-            }
-          }
-          return { id: entry.id, name: entry.name, url: link };
-        }));
-      };
-
-      for (let i = 0; i < imageEntries.length; i += BATCH_SIZE) {
-        imagesWithLinks.push(...await processBatch((imageEntries as any[]).slice(i, i + BATCH_SIZE)));
-      }
-      
       // Filter pdfs and docs (fichas)
       const docEntries = response.result.entries.filter((entry: any) => 
         entry['.tag'] === 'file' && entry.name.match(/\.(pdf|doc|docx)$/i)
       );
+
       let docMap: Record<string, string> = {};
-      
       const standaloneDocs = [];
 
-      for (let i = 0; i < docEntries.length; i += BATCH_SIZE) {
-         const batch = await processBatch(docEntries.slice(i, i + BATCH_SIZE));
-         for (const doc of batch) {
-           if (doc.url) {
-             const plainName = doc.name.replace(/\.[^/.]+$/, "");
-             docMap[plainName] = doc.url;
-             standaloneDocs.push({
-               id: doc.id,
-               name: doc.name,
-               url: doc.url,
-               documentUrl: doc.url,
-               isDoc: true
-             });
-           }
-         }
+      for (const doc of docEntries as any[]) {
+         const url = `/api/dropbox-image?id=${encodeURIComponent(doc.id)}`;
+         const plainName = doc.name.replace(/\.[^/.]+$/, "");
+         docMap[plainName] = url;
+         standaloneDocs.push({
+           id: doc.id,
+           name: doc.name,
+           url: url,
+           documentUrl: url,
+           isDoc: true
+         });
       }
 
       // We attach the docUrl to images.
-      const finalImages = imagesWithLinks.map(img => {
+      const finalImages = imageEntries.map((img: any) => {
         const plainName = img.name.replace(/\.[^/.]+$/, "");
         return {
-          ...img,
+          id: img.id,
+          name: img.name,
+          url: `/api/dropbox-image?id=${encodeURIComponent(img.id)}`,
           documentUrl: docMap[plainName] || null 
         };
       });

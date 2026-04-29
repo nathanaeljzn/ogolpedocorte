@@ -23,8 +23,8 @@ export function Fotogramas() {
           transition={{ duration: 0.6 }}
           className="mb-16"
         >
-          <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight mb-6 text-[#0E472D]">Banco de Fotogramas</h2>
-          <p className="text-lg text-[#2B734D] max-w-3xl leading-relaxed">
+          <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight mb-6 text-zinc-900">Banco de Fotogramas</h2>
+          <p className="text-lg text-zinc-800 max-w-3xl leading-relaxed">
             Pensamos na elaboração do site O Golpe do Corte como um laboratório de um cinema-processo visa impulsionar as potencialidades dos fotogramas para se desvencilharem de seu sentido narrativo inicial e desenvolver um aplicativo para elaboração de um “cinema de edição”.
           </p>
         </motion.div>
@@ -37,7 +37,7 @@ export function Fotogramas() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="relative aspect-[3/2] rounded-xl overflow-hidden bg-[#E3F0E9] group shadow-md"
+              className="relative aspect-[3/2] rounded-xl overflow-hidden bg-zinc-100 group shadow-md"
             >
               <Image
                 src={foto.src}
@@ -47,7 +47,7 @@ export function Fotogramas() {
                 referrerPolicy="no-referrer"
                 unoptimized
               />
-              <div className="absolute inset-0 ring-1 ring-inset ring-[#0E472D]/10 rounded-xl" />
+              <div className="absolute inset-0 ring-1 ring-inset ring-zinc-900/10 rounded-xl" />
             </motion.div>
           ))}
         </div>

@@ -15,7 +15,7 @@ export function Apresentacao() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight mb-6 md:mb-8 text-[#0E472D]">Apresentação</h2>
+              <h2 className="text-3xl md:text-5xl font-display font-bold tracking-tight mb-6 md:mb-8 text-zinc-900">Apresentação</h2>
             </motion.div>
 
             {/* Mobile Image (rendered between title and text) */}
@@ -24,7 +24,7 @@ export function Apresentacao() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="lg:hidden relative w-full mb-8 rounded-2xl overflow-hidden shadow-2xl shadow-[#0E472D]/10"
+              className="lg:hidden relative w-full mb-8 rounded-2xl overflow-hidden shadow-2xl shadow-zinc-900/10"
             >
               <Image
                 src="https://dl.dropboxusercontent.com/scl/fi/151y9dv7jrw00hdibjmpj/imagem-apresentacao.png.png?rlkey=xouekdcvyv6jog99iicg0mj78&raw=1"
@@ -41,7 +41,7 @@ export function Apresentacao() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="space-y-6 text-lg text-[#2B734D] leading-relaxed"
+              className="space-y-6 text-lg text-zinc-800 leading-relaxed"
             >
               <p>
                 Nos anos de 1990, herdei do meu pai uma coleção de mais de trinta mil fotogramas de cinema (décadas de 20 a 60). Esses fotogramas, em geral mostram os atores principais dos filmes e foram cuidadosamente guardados em álbuns feitos para esse fim, contento o nome e o ano da produção, bem como uma legenda com os nomes dos atores. Esse arquivo constitui uma fonte inesgotável de imagens da memória do cinema e um material de trabalho para minhas experimentações.
@@ -58,7 +58,7 @@ export function Apresentacao() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="hidden lg:block relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-[#0E472D]/10"
+            className="hidden lg:block relative w-full rounded-2xl overflow-hidden shadow-2xl shadow-zinc-900/10"
           >
             <Image
               src="https://dl.dropboxusercontent.com/scl/fi/151y9dv7jrw00hdibjmpj/imagem-apresentacao.png.png?rlkey=xouekdcvyv6jog99iicg0mj78&raw=1"

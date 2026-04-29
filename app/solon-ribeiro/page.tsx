@@ -5,27 +5,28 @@ import Image from 'next/image';
 
 export default function SolonRibeiroPage() {
   return (
-    <main className="min-h-screen bg-[#F4F9F6] text-[#0E472D] selection:bg-[#0E472D] selection:text-[#F4F9F6]">
+    <main className="min-h-screen bg-zinc-50 text-zinc-900 selection:bg-zinc-900 selection:text-zinc-50">
       <Navbar />
       
       <article className="pt-32 pb-24 px-6 max-w-4xl mx-auto">
         <header className="mb-16 text-center">
-          <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-6 text-[#0E472D]">Solon Ribeiro</h1>
-          <p className="text-xl text-[#2B734D] font-medium uppercase tracking-widest">O Artista / The Artist</p>
+          <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tighter mb-6 text-zinc-900">Solon Ribeiro</h1>
+          <p className="text-xl text-zinc-800 font-medium uppercase tracking-widest">O Artista / The Artist</p>
         </header>
 
-        <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#E3F0E9] mb-16 shadow-xl shadow-[#0E472D]/10">
+        <div className="relative aspect-video rounded-2xl overflow-hidden bg-zinc-100 mb-16 shadow-xl shadow-zinc-900/10">
           <Image
-            src="https://picsum.photos/seed/solon-full/1200/600?grayscale"
+            src="https://dl.dropboxusercontent.com/scl/fi/vvgvlenlpdmlfsshi01d7/solonribeiro.jpeg?rlkey=vqprqmbhaubsd8olc0sry3x5d&raw=1"
             alt="Solon Ribeiro"
             fill
-            className="object-cover opacity-90"
+            className="object-cover opacity-90 object-top"
             referrerPolicy="no-referrer"
+            unoptimized={true}
           />
-          <div className="absolute inset-0 ring-1 ring-inset ring-[#0E472D]/10 rounded-2xl" />
+          <div className="absolute inset-0 ring-1 ring-inset ring-zinc-900/10 rounded-2xl" />
         </div>
 
-        <div className="prose prose-lg prose-zinc max-w-none text-[#2B734D] prose-headings:text-[#0E472D] prose-headings:font-display prose-a:text-[#0E472D] hover:prose-a:text-[#B71C1C] prose-strong:text-[#0E472D]">
+        <div className="prose prose-lg prose-zinc max-w-none text-zinc-800 prose-headings:text-zinc-900 prose-headings:font-display prose-a:text-zinc-900 hover:prose-a:text-[#B71C1C] prose-strong:text-zinc-900">
           
           <section className="mb-16">
             <p>
@@ -36,7 +37,7 @@ export default function SolonRibeiroPage() {
             </p>
           </section>
 
-          <hr className="border-[#B1D8C4]/50 my-16" />
+          <hr className="border-zinc-300/50 my-16" />
 
           <section className="mb-16">
             <h2 className="text-3xl font-bold mb-8">Solon Ribeiro ou a violentação das imagens clichês</h2>
@@ -81,13 +82,13 @@ export default function SolonRibeiroPage() {
             <p>
               O chamado da morte – feito por um animal, uma máquina ou uma imagem cliché que entra em contato conosco através de um efeito, um ardil –, sua fala, seu olhar, são uma virtualidade pura que tenta nos capturar. Podemos comparar esta experiência de uma imagem que nos olha ou uma máquina que nos fala, à descrição feita por Viveiros de Castro do encontro entre os índios e as alteridades-espíritos.
             </p>
-            <blockquote className="border-l-4 border-[#B1D8C4] pl-4 italic my-6">
+            <blockquote className="border-l-4 border-zinc-300 pl-4 italic my-6">
               “Um dos traumas típicos, no mundo indígena, envolve uma saída solitária de uma pessoa ao mato, para caçar por exemplo, a qual desemboca no encontro repentino com esses germes, essas larvas de Estado que são as alteridades-espírito, as agências sobrenaturais com o poder de nos contra-definir: “Aqui o sujeito sou eu. Você não é humano coisa nenhuma. Venha para mim, torne-se um de nós”.” (VIVEIROS DE CASTRO, 2007, p. 232)
             </blockquote>
             <p>
               Viveiros de Castro chama este encontro com a morte (através de um diálogo ou troca de olhares) de quase-experiência. Não podemos narrar a morte sem termos morrido. Mas se morremos, tampouco poderemos voltar para contar como foi. E ainda assim, narramos a morte porque a quase-experimentamos. A única coisa que podemos narrar é, portanto, esta quase-morte. A quase-experiência está na base das narrativas ao mesmo tempo que precede e extrapola toda narrativa. É o ilocalizável e inenarrável (o virtual) por detrás do que é narrado. Da não-imagem e do simulacro emana, assim, uma quasidade – sobrenatural enquanto virtualidade pura:
             </p>
-            <blockquote className="border-l-4 border-[#B1D8C4] pl-4 italic my-6">
+            <blockquote className="border-l-4 border-zinc-300 pl-4 italic my-6">
               “O sobrenatural não é o imaginário, não é o que acontece em outro mundo; o sobrenatural é aquilo que quase-acontece em nosso mundo, ou melhor, ao nosso mundo, transformando-o em um quase-outro mundo. Quase-acontecer é um modo específico de acontecer, nem qualidade nem quantidade, mas “quasidade”. Não se trata de uma categoria psicológica, mas ontológica: a intensidade ou virtualidade puras. O que exatamente acontece, quando algo quase acontece? O quase-acontecer: a repetição do que não terá acontecido? (…) Em suma, creio que há uma vasta província a mapear aqui – a economia da quasidade nas ontologias indígenas. Talvez haja uma relação complexa disso com o mecanismo de conjuração- antecipação de que falam Deleuze e Guattari nos Mil platôs.” (VIVEIROS DE CASTRO, 2007, p. 239-240)
             </blockquote>
             <p>
@@ -105,7 +106,7 @@ export default function SolonRibeiroPage() {
             </div>
           </section>
 
-          <hr className="border-[#B1D8C4]/50 my-16" />
+          <hr className="border-zinc-300/50 my-16" />
 
           <section className="mb-16">
             <h2 className="text-3xl font-bold mb-8">Solon Ribeiro, He killed cinema, photography and art in the cut stroke</h2>
@@ -179,7 +180,7 @@ export default function SolonRibeiroPage() {
             </div>
           </section>
 
-          <hr className="border-[#B1D8C4]/50 my-16" />
+          <hr className="border-zinc-300/50 my-16" />
 
           <section className="mb-16">
             <h2 className="text-3xl font-bold mb-8">Portfólio & Séries</h2>
