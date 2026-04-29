@@ -1,9 +1,10 @@
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Footer } from '@/components/ui/footer';
 
 export default function SobreAColecao() {
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900">
+    <div className="min-h-screen bg-zinc-50 text-zinc-900 flex flex-col">
       <header className="p-6 border-b border-zinc-300/50 bg-zinc-100/50 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-display font-bold text-zinc-900">A Coleção</h1>
@@ -14,7 +15,7 @@ export default function SobreAColecao() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-16 md:py-24">
+      <main className="max-w-4xl mx-auto px-6 py-16 md:py-24 flex-grow">
         <div className="space-y-8 text-lg text-zinc-800 leading-relaxed font-sans">
           <p>
             Manuel Eduardo Pierre Solon começou sua coleção de fotogramas ainda criança, conseguidos no cine são João, em Sobral. Seus álbuns foram aumentando em sua passagem pelo Crato. Já em Fortaleza chegou ao auge quando frequentava as seções dos cines Rex e Diogo.
@@ -37,6 +38,7 @@ export default function SobreAColecao() {
           </p>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
